@@ -1,4 +1,4 @@
-# Object-orienten programming and techniques course
+# Object-oriented programming and techniques course
 
 ## How to build and run the page
 
