@@ -1,0 +1,24 @@
+{
+  "index": {
+    "title": "🏠"
+  },
+  "---": {
+    "type": "separator"
+  },
+  "01-persistance-active-record": {
+    "title": "Wzorce persystencji - Active Record",
+    "type": "page",
+    "display": "hidden"
+  },
+ 
+  "menu": {
+    "title": "Rozdziały",
+    "type": "menu",
+    "items": {
+      "01-intro": {
+        "title": "1. Wzorce persystencji - Active Record",
+        "href": "/01-persistance-active-record"
+      }
+    }
+  }
+}
