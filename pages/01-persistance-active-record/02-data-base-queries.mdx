@@ -1,0 +1,45 @@
+import {Callout} from 'nextra/components'
+
+## Połączenie z bazą danych
+W tej części laboratorium korzystamy z JDBC (Java DataBase Connectivity). Jest to interfejs, który umożliwia programom utworzonym w Javie na łączenie się z bazą danych.  
+Największą zaletą JDBC jest uniwersalność - aby połączyć się z inną bazą danych wystarczy podmienić sterownik implementujący interfejs.
+
+W naszym ćwiczeniu za obsługę połączenia z bazą jest odpowiedzialna klasa `ConnectionProvider`.
+
+
+## Wykonywanie zapytań
+
+Aby ułatwić wykonywanie zapytań stworzona została klasa `QueryExecutor`. Zajmuje się ona wysyłaniem zapytań do bazy oraz zwracaniem wyników. Dodatkowo, pomocnicze metody zostały umieszczone w klasie `QueryHelper`.
+
+`QueryExecutor` zawiera następujące metody wspomagające stworzenie standardowego CRUD'a (Create, Read, Update, Delete):
+
+* `public static void create(String insertSql, Object... args)` - wykorzystuje przesłane argumenty do stworzenia (i wykonania) zapytania SQL (przy pomocy `PreparedStatement`).
+* `public static int createAndObtainId(String insertSql, Object... args)` - wykonuje podany SQL (wykorzystując parametry) oraz pobiera id stworzonego obiektu.
+* `public static ResultSet read(String sql, Object... args)` - wykonuje podany SQL (wykorzystując parametry) oraz zwraca ResultSet zawierający wyniki zapytania.
+* `public static int readIdFromResultSet(ResultSet resultSet)` - przyjmuje ResultSet uzyskany w metodzie `read()` i zwraca id znajdującego się w nim obiektu.
+* `public static void delete(String sql, Object... args)` - wykonuje podany SQL.
+* `public static void executeUpdate(List<String> sql, List<List<Object>> args)` - wykonuje podane SQL'e.
+
+`ResultSet` to klasa zawierająca zbiór wyników otrzymanych z zapytania do bazy danych. Więcej o czytaniu wyników z ResultSet możesz przeczytać w dziale "Pomoc".
+
+W naszym laboratorium będziemy tworzyć zapytania za pomocą klasy `PreparedStatement`, która poprawia wydajność i chroni przed atakiem SQL Injection. Opcją alternatywną mogłoby być przesłanie gotowego stringa (stworzonego za pomocą `String.format(...)`) do konstruktora klasy `PreparedStatement`). Rozwiązanie to działałoby poprawnie, jednak byłoby podatne na atak SQL Injection. Aby przedstawioną sytuację lepiej zrozumieć spójrzcie na poniższy przykład:
+
+```java
+String sql = String.format("INSERT INTO student VALUES('%s')", user)
+PreparedStatement ps = conn.createStatement(sql);
+ps.execute();
+```
+
+oraz
+
+```java
+PreparedStatement ps = conn.prepareStatement("INSERT INTO student VALUES(?)");
+ps.setString(1, user);
+ps.execute();
+```
+
+<Callout type="info">
+**Do przemyślenia**
+
+Co się stanie, jeśli wykonamy powyższy kod (w obu opcjach) dla zmiennej `user`, o wartości `Robert'); DROP TABLE students; --`.
+</Callout>

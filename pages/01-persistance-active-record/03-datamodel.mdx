@@ -1,0 +1,44 @@
+import {Callout} from 'nextra/components'
+import {Details} from '../../components/details'
+
+## Model domenowy
+
+W pakiecie `pl.edu.agh.iisg.to.model` znajduje się model domenowy używany przez nas na potrzeby tego ćwiczenia. 
+
+**Zadanie:** Przejrzyj klasy znajdujące się w pakiecie `pl.edu.agh.iisg.to.model` pod kątem posiadanych przez nie pól oraz zależności pomiędzy poszczególnymi klasami.
+
+
+## Schemat bazy danych
+
+W klasie `QueryExecutor` w metodzie `createTables()` znajduje się SQL odpowiedzialny za stworzenie schematu naszej bazy danych. Schemat ten wygląda następująco:
+
+![Model danych](/01-persistance-active-record/database-schema.png)
+
+
+
+## Pytanie - zagadka 
+
+
+<Callout type="info">
+Jaki jest związek między modelem umieszczonym w klasach Javy (`Course`, `Grade`, `Student`) i między schematem bazy danych?
+</Callout>
+
+<br />
+<Details>
+
+Schemat bazy danych niemalże pokrywa się ze modelem domenowym.
+Mamy:
+
+- Klasę `Student` - tabelę `student` w bazie danych
+- Klasę `Course` - tabelę `course` w bazie danych
+- Klasę `Grade` - tabelę `grade` w bazie danych
+
+Dodatkową tabelą w bazie danych jest `student_course`, która odwzorowuje połączenie między `Student` i `Course`. Jest to tzw. tabela łącznikowa. Pozwala ona na odwzorowanie relacji wiele do wielu.
+
+**Wniosek** 
+
+We wzorcu ActiveRecord model jest ściśle związany z bazą danych - klasy odpowiadają tabelom w bazie, mogą też istnieć dodatkowe tabele łącznikowe pozwalające na odwzorowanie relacji między klasami.
+
+
+
+</Details>

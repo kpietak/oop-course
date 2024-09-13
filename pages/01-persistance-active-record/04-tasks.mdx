@@ -1,0 +1,100 @@
+import {Callout} from 'nextra/components'
+import {Details} from '../../components/details'
+
+## Wprowadzenie
+W tym ćwiczeniu będziemy implementować metody odpowiadające za wstawianie oraz pobieranie danych z bazy.  
+
+Aby to ułatwić warto zajrzeć do działu [Pomoc](05-help). Są tam opisane kwestie techniczne bardzo przydatne w tych zadaniach (m.in. tworzenie Stringów z SQL'ami w Javie, podstawowe klauzule SQL, obsługa ResultSetu).
+
+
+## Tworzenie i pobieranie danych w klasie Student
+
+1. W klasie `Student` zaimplementuj metodę `create`. Powinna ona dodawać rekord do tabeli `student`. Aby zaimplementować tę metodę musisz (można spojrzeć na metodę `create` klasy `Course`):
+    * Uzupełnić kod SQL w zmiennej `sql`.
+    * Stworzyć zmienną args, która zawiera w sobie parametry zapytania (w odpowiedniej kolejności).
+    * Dodać do tabeli `student` rekord korzystając z metody `QueryExecutor.createAndObtainId()`.
+    * Pobrać stworzonego studenta za pomocą metody `Student.findById()`.
+        
+        Po wykonaniu tego zadania powinien działać test `createStudentTest()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
+2. W klasie `Student` zaimplementuj metodę `findByIndexNumber()`. Skorzystaj z `QueryExecutor.read()`. Aby to zrobić musisz:
+    * Pobrać rekord studenta korzystając z metody `QueryExecutor.read()`.
+    * Na podstawie pobranych danych utworzyć nowy obiekt klasy `Student`.
+    
+        Po wykonaniu tego zadania powinien działać test `findStudentIndexTest()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
+
+
+## Zapisywanie studenta na dany kurs - odwzorowanie relacji wiele do wielu
+
+Tworzona przez nas aplikacja umożliwia zapisywanie studentów na konkretny kurs. Służy temu metoda `enrollStudent()` w klasie `Course`.  
+Aby odwzorować tę relację w bazie wykorzystujemy specjalnie stworzoną do tego tabelę `student_course`. Każdy rekord w tej tabeli odpowiada przypisaniu jednego studenta do jednego kursu.
+
+Metoda `enrollStudent()` powinna zwracać `true`, jeśli udało się zapisać studenta na dany kurs oraz `false` w przeciwnym wypadku (np. jeśli student był już zapisany na ten kurs).
+
+**Zadanie:** Zaimplementuj metodę `enrollStudent()`. Powinna ona tworzyć wpis w bazie danych, w tabeli `student_course`. Wykorzystaj do tego metodę `QueryExecutor.createAndObtainId()`. 
+
+Po wykonaniu tego zadania powinien działać test `enrollStudentTest()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
+
+<Callout type="info">
+**Pytanie**  
+
+Jak nazywa się ten rodzaj tabel, które pozwalają na odwzorowanie relacji wiele do wielu?
+</Callout>
+<br />
+
+<Details>
+Tabele łącznikowe.
+</Details>
+
+
+## Zwracanie listy studentów zapisanych na dany kurs
+
+Metoda `Course.studentList()` powinna zwracać listę studentów zapisanych na dany kurs.  
+**Zadanie:** Zaimplementuj tę metodę korzystając z `QueryExecutor.read()`.
+
+Sprawdź poprawność wykonania tego zadania uruchamiając test `courseStudentListTest()` z klasy `ActiveRecordTest`.
+
+<Callout type="info">
+**Pytanie**
+
+Czy użyłeś metody `Student.findById()` czy klauzuli JOIN? Jaka będzie różnica w wydajności pomiędzy tymi dwoma metodami? 
+</Callout>
+
+<br />
+
+<Details>
+Korzystając z metody *Student.findById()* dla każdego studenta będziemy wykonywali osobne zapytanie dla bazy. 
+
+Metoda JOIN pozwala nam na grupowe pobranie danych przez co ograniczamy liczbę zapytań i poprawiamy wydajność.
+
+</Details>
+
+
+## Usprawnienie pobierania listy studentów (do zrobienia jeśli jest dużo czasu)
+Załóżmy, że w naszej aplikacji studenci są przypisywani do kursów tylko raz, na samym początku.
+Wiedząc to możemy jeszcze bardziej zoptymalizować pobieranie listy studentów korzystając z bardzo prostego cache. 
+Przy pierwszym wywołaniu metody `cachedStudentsList()` będziemy zapisywać pobraną listę do pola enrolledStudents, a przy kolejnych wywołaniach tej metody będziemy zwracać zapisaną wcześniej listę.
+
+**Zadanie:** Zaimplementuj metodę `cachedStudentsList()`. Wykorzystaj do tego metodę `studentsList()` oraz pola `enrolledStudents` i `isStudentsListDownloaded`. Jeśli będziesz miał problem z tym zadaniem poproś o pomoc prowadzącego.
+
+Sprawdź poprawność wykonania tego zadania uruchamiając test `cachedCurseStudentListTest()` z klasy `ActiveRecordTest`.
+
+
+## Ocenianie studenta
+Klasa `Grade` odpowiada pojedynczej ocenie wystawionej studentowi w danym kursie. 
+
+**Zadanie:** Zaimplementuj metodę `Grade.gradeStudent()` korzystając z metody `QueryExecutor.createAndObtainId()`.
+
+Sprawdź poprawność wykonania tego zadania uruchamiając test `gradeStudentTest()` z klasy `ActiveRecordTest`.
+
+
+<Callout type="info">
+**Pytanie**  
+
+W jaki sposób w bazie odwzorowujemy powiązanie `Grade` ze `Student` oraz `Course`? Zapisujemy całe obiekty czy tylko jakąś ich część?
+</Callout>
+
+<br />
+
+<Details>
+W tabeli <i>grade</i> zapisujemy rekordy zawierające tylko ID obiektu Student i ID obiektu Course.
+</Details>

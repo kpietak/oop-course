@@ -1,0 +1,51 @@
+
+## Ogólne
+
+### Optional
+`Optional` jest klasą wspomagającą radzenie sobie z `NullPointerException`.   
+Optional może albo być pusty albo zawierać niepustą (różną od nulla) wartość. Kilka przykładów:
+
+```java
+Optional.empty(); //tworzenie pustego optionala
+Optional.of(object) //opakowanie object w Optional
+```
+
+## Active Record
+
+### SQL
+
+**Wstawianie:**
+```sql
+INSERT INTO table (column1, column2) VALUES ('value1', 1)
+```
+**Pobieranie:**
+```sql
+SELECT * FROM table WHERE id = 3
+```
+
+### Tworzenie zapytań
+
+Zapytania tworzymy jako Stringi, które są potem opakowywane w `PreparedStatement`. Aby w zapytaniu uwzględnić argumenty, zostawiamy dla nich miejsce oznaczając je znakiem `?`, np:
+
+```java
+String sql = "INSERT INTO table (column1, column2) VALUES (?, ?)";
+```
+
+Potem takie argumenty ustawiamy w `PreparedStatement` (w naszym kodzie robi to klasa `QueryHelper`).
+
+
+### ResultSet
+Zapytania SQL, które czytają dane z bazy zwracają wynik w postaci tzw. result setu. Obiekt ten zawiera kursor, który wskazuje na aktualnie czytany wiersz wyników.
+Z ResultSetu możemy wyciągać wczytane dane.
+
+Interesujące nas metody to:
+```java
+ResultSet rs;
+rs.next(); //metoda ta przesuwa kursor o jeden wiersz, zwraca true jeśli istnieje jeszcze jakiś rekord i false, jeśli skończyliśmy czytać wyniki
+rs.getInt("column_name"); //wczytanie z danego wiersza kolumny o nazwie "column_name" i typie Integer
+rs.getString("column_name"); //wczytanie z danego wiersza kolumny o nazwie "column_name" i typie String 
+```
+Trzeba też zwrócić uwagę na to, że na początku kursor w ResultSet jest ustawiony **przed** pierwszym wierszem.
+
+Więcej o ResultSet można poczytać w [JavaDoc ResultSet](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html).
+
