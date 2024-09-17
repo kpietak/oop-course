@@ -1,0 +1,102 @@
+#### Wstęp
+W Hibernate możemy skonfigurować mapowanie obiektowo-relacyjne za pomocą adnotacji lub plików xml. W naszym ćwiczeniu będziemy używać adnotacji.
+
+
+#### Entity
+W każdej z klas modelu (`Student`, `Grade`, `Course`) możemy zauważyć dwie adnotacje nad nazwą klasy:
+
+```java
+@Entity
+@Table(name = Student.TABLE_NAME)
+public class Student {}
+```
+Przyjrzyjmy się im po kolei:
+
+* `@Entity` - informuje, że ta klasa jest encją, co oznacza, że powinna zostać zmapowana do bazy danych.
+* `@Table(name =...)` - w ten sposób określamy jak w bazie danych powinna nazywać się tabela zawierająca rekordy zmapowane z tej klasy.
+
+
+#### Podstawowe mapowania
+
+Na początku przyjrzyjmy się mapowaniu w klasie `Grade`.
+
+```java
+@Id
+@GeneratedValue(strategy = GenerationType.TABLE)
+@Column(name = Columns.ID)
+private int id;
+```
+Przenalizujmy wszystkie adnotacje użyte w tym przykładzie.
+
+* `@Id` - w ten sposób informujemy Hibernate, że ta zmienna jest kluczem głównym (primary key).
+* `@GeneratedValue` - wartość tego pola powinna być generowana przez bazę danych.
+* `@Column(name = Columns.ID)` - pole `id` mapujemy na kolumnę w bazie danych. Nazwa kolumny będzie wyciągnięta ze stałej `Columns.ID`.
+
+```java
+@Column(name = Columns.NAME, nullable = false, length = 50, unique = true)
+private String name;
+```
+W tym wypadku pole `name` mapujemy kolumną w bazie danych o nazwie zapisanej w stałej `Columns.NAME`. Do tego mówimy, że tej kolumnie nie powinno być nulli, maksymalna długość to 50, a wartości powinno być unikalne.
+
+#### Relacje między klasami
+Pomiędzy klasami w Javie mogą zachodzić relacje:
+
+* 1-1 (jeden do jednego) - np. jeden student może posiadać tylko jedną legitymację.
+* 1-N (jeden do wielu) - np. jeden student może posiadać wiele ocen. Ocena może być przypisana tylko do jednego studenta.
+* N-M (wiele do wielu) - np. jeden student może być przypisany do wielu kursów. Do każdego kursu może być przypisanych wielu studentów.
+
+Dla każdej z tych relacji możemy utworzyć mapowanie. W naszym ćwiczeniu występują relacje 1-N oraz N-M.
+
+##### 1-N (jeden do wielu)
+Relację jeden do wielu możemy zaobserwować pomiędzy ocenami (`Grade`) oraz studentami (`Student`). Jeden student może mieć wiele ocen, każda ocena jest przypisana do maksymalnie jednego studenta.  
+Zobaczmy jak wygląda to w kodzie:  
+
+W klasie `Grade`:
+```java
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = Columns.STUDENT_ID)
+private Student student;
+```
+Analizując adnotacje po kolei:
+
+* `@ManyToOne(fetch = FetchType.LAZY)` - tutaj wskazujemy, że wiele ocen może zostać przypisanych do jednego studenta. Ponadto określamy też sposób ładowania tego pola. LAZY oznacza, że będziemy ładować obiekt Studenta do pamięci dopiero w razie potrzeby.
+* `@JoinColumn(name = Columns.STUDENT_ID)` - określamy która kolumna powinna zostać użyta do robienia JOINa przy pobieraniu danych (definiujemy foreign key)
+
+
+Ponadto chcemy, żeby Student posiadał też zbiór swoich ocen. Dlatego w klasie `Student` umieszczamy kod odpowiedzialny za drugą część mapowania:
+```java
+@OneToMany(mappedBy = "student")
+private Set<Grade> gradeSet = new HashSet<>();
+```
+W tym wypadku mówimy, że jest to relacja `@OneToMany` - jeden student może mieć wiele ocen. Wartość `mappedBy` wskazuje które pole w klasie `Grade` jest odpowiedzialne za drugą część mapowania.
+
+**Uwaga** Zauważ, że w klasie `Grade` podajemy mapowanie `@ManyToOne` a w klasie `Student` to samo mapowanie określamy jako `@OneToMany`.
+
+
+##### N-M (wiele do wielu)
+
+W naszym przykładzie relację N-M możemy zaobserwować pomiędzy studentami oraz kursami - jeden student może być przypisany do wielu kursów. W jednym kursie może być wielu studentów.
+
+Zobaczmy jak to wygląda od strony kodu:
+
+W klasie `Course`:
+```java
+@ManyToMany
+@JoinTable(
+    name = "student_course",
+    joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "ID"),
+    inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "ID"))
+private Set<Student> studentSet = new HashSet<>();
+```
+* `@ManyToMany` - deklaracja, że jest to relacja wiele do wielu
+* `@JoinTable` - tworzymy tabelę łącznikową
+  * name - nazwa tabeli
+  * joinColumns - określamy, która kolumny w obecnej tabeli (`Course`) powinna być używana do joinów (kolumna z kluczem obcym)
+  * inverseJoinColumns - określamy, które kolumny w tabeli studentów (`Student`) powinny być używane do joinów
+  * referencedColumnName - pozwala na określenie do której kolumny odnosi się klucz obcy.
+
+A w klasie `Student`:
+```java
+@ManyToMany(mappedBy = "studentSet")
+private Set<Course> courseSet = new HashSet<>();
+```
