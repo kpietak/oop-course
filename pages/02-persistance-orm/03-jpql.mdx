@@ -30,8 +30,8 @@ Car car = session.createQuery("Select c FROM Car c WHERE c.year = :year", Car.cl
                  .getSingleResult(); //4
 ```
 
-1. Do tworzenia zapytań potrzebujemy obiekt typu Session. W naszym laboratorium możemy ją pozyskać korzystając z metody `getCurrentSession()` w `GenericDao`.
-1. Tworzymy Query korzystając z metody session.createQuery(). Jako argumenty podajemy treść zapytania oraz klasę, której dotyczy zapytanie. W zapytaniu możemy umieszczać paramtery, korzystając z dwukropka (:nazwa_parametru).
-1. Pod parametry podkładamy konkretne dane.
+1. Do tworzenia zapytań potrzebujemy obiekt typu `Session`. W naszym laboratorium możemy ją pozyskać korzystając z metody `getCurrentSession()` w `GenericDao`.
+1. Tworzymy Query korzystając z metody `session.createQuery()`. Jako argumenty podajemy treść zapytania oraz klasę, której dotyczy zapytanie. W zapytaniu możemy umieszczać parametry, korzystając z dwukropka (`:nazwa_parametru`).
+1. Pod parametry podstawiamy konkretne dane.
 1. Pobieramy pojedynczy rezultat.
 

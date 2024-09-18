@@ -11,16 +11,16 @@ Klasa `GenericDao` jest bazą do budowania kolejnych DAO. Posiada ona metody:
 
 * `public void save(T object)` - metoda zapisująca obiekt do bazy.
 * `public void update(T object)` - metoda aktualizująca stan obiektu w bazie.
-* `public Session getCurrentSession()` - metoda pozwalająca na stworzenie obiektu Session, który będziemy wykorzystywać następnie do tworzenia zapytań do bazy danych.
+* `public Session currentSession()` - metoda pozwalająca na stworzenie obiektu `Session`, który będziemy wykorzystywać następnie do tworzenia zapytań do bazy danych.
 
 Wszystkie DAO (`StudentDao`, `GradeDao`, `CourseDao`) rozszerzają klasę `GenericDao`.
 
 ### StudentDao
 
-1. Zaimplementuj metodę `create()` w klasie `StudentDao`. Skorzystaj z metody `save()`. Pamiętaj o złapaniu wyjątku PersistenceException rzucanego przez metodę `GenericDao.save()`.  
+1. Zaimplementuj metodę `create()` w klasie `StudentDao`. Skorzystaj z metody `save()`. Pamiętaj o złapaniu wyjątku `PersistenceException` rzucanego przez metodę `GenericDao.save()`.  
 Sprawdź poprawność wykonania tego zadania uruchamiając test `createStudentTest()`.
 
-1. Zaimplementuj metodę `findByIndexNumber()` w klasie `StudentDao`. Użyj do tego metody `getCurrentSession().createQuery()`. Pamiętaj o złapaniu wyjątku PersistencException.  
+1. Zaimplementuj metodę `findByIndexNumber()` w klasie `StudentDao`. Użyj do tego metody `currentSession().createQuery()`. Pamiętaj o złapaniu wyjątku `PersistenceException`.  
 Sprawdź poprawność wykonania tego zadania uruchamiając test `findStudentIndexTest()`.
 
 
@@ -75,3 +75,10 @@ W poprzednim ćwiczeniu (Active Record) implementowaliśmy też metodę pozwalaj
 <Details>
 Nie. Tym razem w klasie Course posiadamy pole ze zbiorem studentów. Za jego ładowanie odpowiedzialny jest Hibernate.
 </Details>
+
+<Callout type="info">
+Jeśli chcesz zobaczyć, jakie dokładnie zapytania SQL wykonuje Hibernate w trakcie działania programu, w pliku `src/test/resources/hibernate.cfg.xml` dodaj wpis:
+```
+<property name="hibernate.show_sql">true</property>
+```
+</Callout>
