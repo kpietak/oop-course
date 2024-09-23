@@ -1,0 +1,58 @@
+import {Callout} from 'nextra/components'
+import {Details} from '../../components/details'
+
+Ostatnim elementem, który dodamy do naszego systemu będzie tzw. **repozytorium**. Wzorzec projektowy **Repository** pozwala opakować zarządzanie dostępem do bazy danych w dodatkową warstwę abstrakcji. Warstwa serwisu zamiast korzystać bezpośrednio z DAO, może wykonywać operacje na repozytorium i traktować zarządzanie encjami tak jakby stanowiły kolekcję danych. Pozwala to na dodatkowe uporządkowanie odpowiedzialności.
+
+### Zadania
+
+1. Zapoznaj się z poniższym kodem i wklej go do projektu - możesz umieścić interfejs `Repository` w pakiecie `pl.edu.agh.iisg.to.repository`:
+
+   ```java
+   import pl.edu.agh.iisg.to.model.Student;
+   
+   import java.util.List;
+   import java.util.Optional;
+   
+   public interface Repository<T> {
+   
+       Optional<T> add(T student);
+   
+       Optional<T> getById(int id);
+   
+       List<T> findAll();
+   
+       void remove(T student);
+   }
+   ```
+
+2. W tym samym pakiecie stwórz klasę `StudentRepository` i zaimplementuj interfejs `Repository<Student>`. 
+
+3. Wypełnij logikę wymaganych przez interfejs metod `add()`, `getById()` oraz `findAll()`. W tym celu posłuż się `StudentDao` - klasa `StudentRepository` powinna przyjmować obiekt `StudentDao` i z niego korzystać.
+
+4. Dodaj logikę dla metody `remove()`. Zastanów się, który fragment `SchoolService` można by tu wykorzystać.
+
+5. Do stworzonego `StudentRepository` dodaj jeszcze jedną metodę: 
+
+   ```java
+   public List<Student> findAllByCourseName(String courseName) {
+   ...
+   }
+   ```
+   Zaimplementuj tę metodę. W razie potrzeby pamiętaj, że w repozytorium możesz użyć więcej niż jednego DAO!
+
+6. Zmodyfikuj kod `SchoolService` tak by przechowywał on obiekt `StudentRepository`. Postaraj się maksymalnie wykorzystać repozytorium zastępując istniejącą logikę w przygotowanych wcześniej metodach. Na koniec pamiętaj by zmodyfikować atrybuty w klasie `OrmTest` tak by testy mogły się zbudować. **Modyfikowanie kodu samych testów nie powinno być potrzebne**. 
+
+    <Callout >
+ 	W jaki sposób wykorzystanie repozytorium upraszcza kod `SchoolService`? Jaki inny wzorzec projektowy w ten sposób realizujemy?
+    </Callout>
+
+    <Details>
+    `SchoolRepository` pozwala na pozycie się zależności od `StudentDao` i `CourseDao` w kodzie logiki biznesowej. Zamiast tego mamy jedno repozytorium, które zarządza dostępem do studentów. Repozytorium staje się w ten sposób fasadą, ukrywającą szczegóły implementacji dostępu do bazy.
+    
+    **Uwaga:** w szczególnych, protszych przypadkach DAO będzie tym samym co Repository. Np. `GradeDao`mogłoby implementować `Repository<Grade>`, bo w obecnej sytuacji repozytorium ocen nie potrzebowałoby żadnych dodatkowych zależności i metod. 
+    </Details>
+
+
+
+
+   
