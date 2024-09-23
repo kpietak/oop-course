@@ -15,12 +15,12 @@ Aby to ułatwić warto zajrzeć do działu [Pomoc](05-help). Są tam opisane kw
     * Dodać do tabeli `student` rekord korzystając z metody `QueryExecutor.createAndObtainId()`.
     * Pobrać stworzonego studenta za pomocą metody `Student.findById()`.
         
-        Po wykonaniu tego zadania powinien działać test `createStudentTest()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
+        Po wykonaniu tego zadania powinien działać test `studentWithUniqueIndexNumberCanBeCreated()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
 2. W klasie `Student` zaimplementuj metodę `findByIndexNumber()`. Skorzystaj z `QueryExecutor.read()`. Aby to zrobić musisz:
     * Pobrać rekord studenta korzystając z metody `QueryExecutor.read()`.
     * Na podstawie pobranych danych utworzyć nowy obiekt klasy `Student`.
     
-        Po wykonaniu tego zadania powinien działać test `findStudentIndexTest()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
+        Po wykonaniu tego zadania powinien działać test `studentCanBeFoundByIndexNumber()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
 
 
 ## Zapisywanie studenta na dany kurs - odwzorowanie relacji wiele do wielu
@@ -32,7 +32,7 @@ Metoda `enrollStudent()` powinna zwracać `true`, jeśli udało się zapisać st
 
 **Zadanie:** Zaimplementuj metodę `enrollStudent()`. Powinna ona tworzyć wpis w bazie danych, w tabeli `student_course`. Wykorzystaj do tego metodę `QueryExecutor.createAndObtainId()`. 
 
-Po wykonaniu tego zadania powinien działać test `enrollStudentTest()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
+Po wykonaniu tego zadania powinien działać test `studentCanBeEnrolledInCourseOnce()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
 
 <Callout type="info">
 **Pytanie**  
@@ -51,7 +51,7 @@ Tabele łącznikowe.
 Metoda `Course.studentList()` powinna zwracać listę studentów zapisanych na dany kurs.  
 **Zadanie:** Zaimplementuj tę metodę korzystając z `QueryExecutor.read()`.
 
-Sprawdź poprawność wykonania tego zadania uruchamiając test `courseStudentListTest()` z klasy `ActiveRecordTest`.
+Sprawdź poprawność wykonania tego zadania uruchamiając test `courseConsistsOfEnrolledStudents()` z klasy `ActiveRecordTest`.
 
 <Callout type="info">
 **Pytanie**
@@ -76,7 +76,7 @@ Przy pierwszym wywołaniu metody `cachedStudentsList()` będziemy zapisywać pob
 
 **Zadanie:** Zaimplementuj metodę `cachedStudentsList()`. Wykorzystaj do tego metodę `studentsList()` oraz pola `enrolledStudents` i `isStudentsListDownloaded`. Jeśli będziesz miał problem z tym zadaniem poproś o pomoc prowadzącego.
 
-Sprawdź poprawność wykonania tego zadania uruchamiając test `cachedCurseStudentListTest()` z klasy `ActiveRecordTest`.
+Sprawdź poprawność wykonania tego zadania uruchamiając test `courseStudentListIsCached()` z klasy `ActiveRecordTest`.
 
 
 ## Ocenianie studenta
@@ -84,7 +84,7 @@ Klasa `Grade` odpowiada pojedynczej ocenie wystawionej studentowi w danym kursie
 
 **Zadanie:** Zaimplementuj metodę `Grade.gradeStudent()` korzystając z metody `QueryExecutor.createAndObtainId()`.
 
-Sprawdź poprawność wykonania tego zadania uruchamiając test `gradeStudentTest()` z klasy `ActiveRecordTest`.
+Sprawdź poprawność wykonania tego zadania uruchamiając test `studentCanBeGraded()` z klasy `ActiveRecordTest`.
 
 
 <Callout type="info">
