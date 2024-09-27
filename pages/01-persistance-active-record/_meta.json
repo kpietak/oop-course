@@ -3,5 +3,10 @@
   "02-data-base-queries": "Zapytania do bazy danych",
   "03-datamodel": "Model i baza danych",
   "04-tasks": "Zadania",
-  "05-help" : "Pomoc"
+  "05-help" : "Pomoc",
+  "source-code" : {
+    "title" : "Kod źródłowy",
+    "href" :  "/01-persistance-active-record/active-record.zip"
+  }
+  
 }
