@@ -1,0 +1,112 @@
+import {Callout} from 'nextra/components'
+import {Details} from '../../components/details'
+
+Tym razem kod zajmujący się operacjami na bazie umieścimy nie w klasach modelu (`Student`, `Course`, `Grade`), jak to miało miejsce w przypadku wzorca *Active Record*, a w specjalnie stworzonych do tego tzw. **DAO - Data Access Object**. Każdej klasie domenowej będzie odpowiadało obsługujące ją DAO.
+
+### Zadania
+
+1. W klasie `StudentDao` zaimplementuj metodę `create()`. Skorzystaj z informacji o cyklu życia encji Hibernate oraz `GenericDao`. 
+
+    <Callout type="info">
+    Test weryfikujący poprawne wykonanie zadania: `studentWithUniqueIndexNumberCanBeCreated()`
+    </Callout>
+	
+1. Następnie zaimplementuj metodę `findByIndexNumber(int indexNumber)`. W tym przypadku konieczne będzie napisanie zapytania do bazy danych. Zapoznaj się z informacjami na temat JPQL i skorzystaj z narzędzia do tworzenia zapytań JPQL. 
+
+	**Uwaga:** pamiętaj o obsłużeniu sytuacji wyjątkowych! W przypadku gdy Hibernate nie jest z jakiegoś powodu poprawnie wykonać zapytania rzuca wyjątkiem `jakarta.persistence.PersistenceException`. 
+
+	<Callout>
+   
+   Czy w momencie ładowania obiektu klasy `Student` ładujemy do pamięci zbiór wszystkich ocen i kursów powiązanych z danym studentem? Spróbuj odpowiedzieć w ciągu minuty, jeśli Ci się nie uda - przeczytaj odpowiedź.
+	</Callout>
+	
+	<br />
+	
+	<Details>
+	To, że nie mogłeś odpowiedzieć na to pytanie w ciągu minuty pokazuje nam pewną istotną kwestię związaną ze wzorcem ORM. 
+	Delegując ładowanie elementów z bazy do biblioteki oddajemy jej część odpowiedzialności. Oczywiście możemy dowolnie konfigurować sposób ładowania danych, natomiast wymaga to głębszej znajomości biblioteki i na pierwszy rzut oka jest mniej oczywiste niż w *Active Record*.
+	Jeśli popełnimy błąd przy konfiguracji to może się okazać, że wczytujemy **całą** naszą bazę danych przy pojedynczym zapytaniu, co w oczywisty sposób zabija wydajność aplikacji.
+	</Details>
+	
+	<Callout type="info">
+	 Test weryfikujący poprawne wykonanie zadania: `studentCanBeFoundByIndexNumber()`
+	 </Callout>
+	
+1. W podobny sposób zaimplementuj metodę `findAll()` zwracającą wszystkich istniejących w bazie studentów. Zwróć uwagę na kolejność rekordów zdefiniowaną w teście `allStudentsCanBeListed()`. W jaki sposób zagwarantować taką kolejność? 
+
+	<Callout type="default">
+    Czy ustalanie kolejności lepiej zrealizować po wykonaniu zapytania w kodzie programu, czy uwzględnić to w samym zapytaniu?
+    </Callout>
+
+    <br />
+
+    <Details>
+    Tam gdzie to możliwe najlepiej delegować operacje na danych do samej bazy. Dotyczy to szczególnie operacji filtrowania i pozwala zmniejszyć liczbę obiektów alokowanych w pamięci, ale nawet takie operacje jak sortowanie danych mogą być wydajniejsze po stronie bazy danych, szczególnie gdy połączymy je z indeksowaniem danych i  np. mechanizmem stronicowania. 
+    </Details>
+   
+	<Callout type="info">
+    Test weryfikujący poprawne wykonanie zadania: `allStudentsCanBeListed()`
+    </Callout>
+
+
+### Przydatne informacje
+
+#### Cykl życia encji w Hibernate
+
+Każdy obiekt w Javie, który chcemy zmapować na wiersz w bazie danych musi najpierw zostać dodany do tzw. *persistence context* w Hibernate. Cykl życia takiego obiektu (encji) został przedstawiony na diagramie poniże:
+
+![Cykl życia encji Hibernate](/02-persistance-orm/hibernate_states.png)
+
+Utworzony obiekt jest zwykłą instancją klasy w Javie i znajduje się w stanie **Transient**. Zmiany dokonywane na takim obiekcie nie są w żaden sposób śledzone przez Hibernate, a on sam nie ma żadnego odwierciedlenia w bazie. 
+
+Aby Hibernate stał się świadomy istnienia takiej encji, musi ona zostać dodana do *persistent context*, który stanowi zbiór wszystkich obiektów zarządzanych przez Hibernate w aktualnej sesji. Kontekstem możemy zarządzać za pomocą obiektu `Session`, który pozwala nam np. oznaczyć obiekt jako gotowy do utrwalenia w bazie (`persist()`). Jego stan zostaje wówczas ustawiony na **Persistent** i od tej pory Hibernate śledzi zmiany dokonywane w obiekcie. Encję można też oznaczyć jako przeznaczoną do usunięcia (`remove()`) lub usunąć ją ze śledzonych obiektów (`evict()`). 
+
+Pobranie obiektu z bazy również sprawia, że trafia on do `persistent context` i pozostaje w stanie **Persistent**. Wszystkie obiekty znajdujące się w kontekście są śledzone przez Hibernate, co oznacza że dowolne zmiany dokonywane w tych obiektach (np. przy pomocy setterów) zostaną potem przełożone na zmiany w bazie danych.
+
+**Uwaga:** baza danych zostaje zmodyfikowana dopiero gdy wywołana zostanie metoda `commit()` lub `flush()`. Do tego momentu są jedynie przygotowane do zaaplikowania w *persistent context*. Pozwala to m. in. na implementację transakcji w sposób transparentny dla programisty. 
+
+#### GenericDao
+
+Klasa `GenericDao` stanowi w naszym kodzie podstawę  do budowania kolejnych DAO. Posiada ona metody:
+
+- `Optional<T> save(T object)` -  zapisująca obiekt do bazy i zwracająca utworzony obiekt w razie sukcesu (lub pusty `Optional` w razie blędu)
+- `boolean remove(T object)` -  usuwająca obiekt z bazy. Zwraca `true` w przypadku gdy w trakcie usuwania nie wystąpił żaden błąd.
+- `Optional<T> findById(int id)` - wyszukująca obiekt po podanym `id` (klucz główny). Zwraca znaleziony obiekt lub pusty `Optional`, jeśli obiekt nie istnieje w bazie lub jeśli wystąpił błąd. 
+- `Session currentSession()` - metoda pozwalająca na stworzenie obiektu `Session`, który będziemy wykorzystywać następnie do tworzenia zapytań do bazy danych.
+
+Wszystkie DAO (`StudentDao`, `GradeDao`, `CourseDao`) rozszerzają klasę `GenericDao`.
+
+####  JPQL
+
+Tym razem do tworzenia zapytań zamiast czystego SQL'a będziemy używać JPQL (*Java Persistance Query Language*). Jest to niezależny od platformy, zorientowany obiektowo język zapytań, zdefiniowany jako część JPA.
+
+JPQL jest mocno inspirowany SQL, jednak m.in. ze względu na zorientowanie obiektowe posiada kilka różnic.
+
+Załóżmy, że posiadamy klasę `Student` posiadającą pola `firstName`, `lastName` i `indexNumber`. Aby pobrać z niej wszystkie dane możemy wykonać następujące zapytanie JQL:
+
+```java
+SELECT s FROM Student s
+```
+W tym miejscu warto zauwazyć, że nie odwołujemy się do nazwy tabeli a do nazwy klasy.
+
+Gdybyśmy chcieli pobrać studenta z numerem indeksu 123456 to nasze zapytanie wyglądałoby następująco:
+
+```java
+SELECT s FROM Student s WHERE s.indexNumber = 123456
+```
+Ponownie trzeba zauważyć, że w JPQL nie odwołujemy sie do nazwy kolumny tylko do nazwy pola.
+
+
+#### Tworzenie zapytań JPQL w Javie
+
+```java
+Session session = getCurrentSession() //1
+Car car = session.createQuery("Select c FROM Car c WHERE c.year = :year", Car.class) //2
+                 .setParameter("year",  2016) //3
+                 .getSingleResult(); //4
+```
+
+1. Do tworzenia zapytań potrzebujemy obiekt typu `Session`. W naszym laboratorium możemy ją pozyskać korzystając z metody `getCurrentSession()` w `GenericDao`.
+1. Tworzymy Query korzystając z metody `session.createQuery()`. Jako argumenty podajemy treść zapytania oraz klasę, której dotyczy zapytanie. W zapytaniu możemy umieszczać parametry, korzystając z dwukropka (`:nazwa_parametru`).
+1. Pod parametry podstawiamy konkretne dane.
+1. Pobieramy pojedynczy rezultat.

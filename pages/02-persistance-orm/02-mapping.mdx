@@ -1,0 +1,114 @@
+import {Callout} from 'nextra/components'
+
+W Hibernate możemy skonfigurować mapowanie obiektowo-relacyjne za pomocą adnotacji lub plików XML. W naszym ćwiczeniu będziemy używać adnotacji.
+
+### Zadania
+
+1. Uruchom testy w klasie `OrmTest`. Przyjrzyj się błędom, które zgłasza Hibernate. Czym są spowodowane?
+1. Otwórz klasę `Student` i dodaj wszystkie niezbędne mapowania. W szczególności zwróć uwagę na:
+- mapowanie klucza głównego,
+- mapowanie relacji 1:N oraz N:M
+- ograniczenia nakładane na wartości kolumn (np. unikalność)
+
+Wykonując zadanie kieruj się wskazówkami w sekcji poniżej. Pamiętaj by odwzorować poprawnie schemat bazy danych, który powinien wyglądać [tak samo jak w Lab1](/01-persistance-active-record/03-datamodel/#schemat-bazy-danych).
+
+<Callout type="warning">
+Po wykonaniu zadania większość testów nadal nie będzie przechodzić. Będziemy je stopniowo naprawiać w kolejnych zadaniach. Na tym etapie powinny już poprawnie przechodzić weryfikację testy `courseWithUniqueNameCanBeCreated()` oraz `courseCanBeFoundById()`. Kod do obsługi zapisu kursów został już przez nas przygotowany w projekcie, więc poprawne zdefiniowanie mapowania dla klasy `Student` powinno umożliwić ich testowanie.
+ </Callout>
+
+### Przydatne informacje
+
+#### Entity
+W każdej z klas modelu (`Student`, `Grade`, `Course`) powinny znajdować się dwie adnotacje nad nazwą klasy:
+
+```java
+@Entity
+@Table(name = Course.TABLE_NAME)
+public class Course {}
+```
+Przyjrzyjmy się im po kolei:
+
+* `@Entity` - informuje, że ta klasa jest encją, co oznacza, że powinna zostać zmapowana do bazy danych.
+* `@Table(name =...)` - w ten sposób określamy jak w bazie danych powinna nazywać się tabela zawierająca rekordy zmapowane z tej klasy.
+
+
+#### Podstawowe mapowania
+
+Na początku przyjrzyjmy się mapowaniu w klasie `Grade`.
+
+```java
+@Id
+@GeneratedValue(strategy = GenerationType.TABLE)
+@Column(name = Columns.ID)
+private int id;
+```
+Przenalizujmy wszystkie adnotacje użyte w tym przykładzie.
+
+* `@Id` - w ten sposób informujemy Hibernate, że ta zmienna jest kluczem głównym (primary key).
+* `@GeneratedValue` - wartość tego pola powinna być generowana przez bazę danych.
+* `@Column(name = Columns.ID)` - pole `id` mapujemy na kolumnę w bazie danych. Nazwa kolumny będzie wyciągnięta ze stałej `Columns.ID`.
+
+```java
+@Column(name = Columns.NAME, nullable = false, length = 50, unique = true)
+private String name;
+```
+W tym wypadku pole `name` mapujemy kolumną w bazie danych o nazwie zapisanej w stałej `Columns.NAME`. Do tego mówimy, że tej kolumnie nie powinno być nulli, maksymalna długość to 50, a wartości powinno być unikalne.
+
+#### Relacje między klasami
+Pomiędzy klasami w Javie mogą zachodzić relacje:
+
+* 1-1 (jeden do jednego) - np. jeden student może posiadać tylko jedną legitymację.
+* 1-N (jeden do wielu) - np. jeden student może posiadać wiele ocen. Ocena może być przypisana tylko do jednego studenta.
+* N-M (wiele do wielu) - np. jeden student może być przypisany do wielu kursów. Do każdego kursu może być przypisanych wielu studentów.
+
+Dla każdej z tych relacji możemy utworzyć mapowanie. W naszym ćwiczeniu występują relacje 1-N oraz N-M.
+
+##### 1-N (jeden do wielu)
+Relację jeden do wielu możemy zaobserwować pomiędzy ocenami (`Grade`) oraz kursami (`Course`). Jeden kurs może mieć wiele ocen, każda ocena jest przypisana do maksymalnie jednego kursu.  
+Zobaczmy jak wygląda to w kodzie:  
+
+W klasie `Grade`:
+```java
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = Columns.COURSE_ID)
+private Student student;
+```
+Analizując adnotacje po kolei:
+
+* `@ManyToOne(fetch = FetchType.LAZY)` - tutaj wskazujemy, że wiele ocen może zostać przypisanych do jednego kursu. Ponadto określamy też sposób ładowania tego pola. `LAZY` oznacza, że będziemy ładować obiekt `Course` do pamięci dopiero w razie odwołania się do niego.
+* `@JoinColumn(name = Columns.COURSE_ID)` - określamy która kolumna powinna zostać użyta do robienia JOINa przy pobieraniu danych (definiujemy *foreign key*)
+
+
+Ponadto chcemy, żeby kurs posiadał też zbiór ocen. Dlatego w klasie `Course` umieszczamy kod odpowiedzialny za drugą część mapowania:
+```java
+@OneToMany(mappedBy = "course")
+private Set<Grade> gradeSet = new HashSet<>();
+```
+W tym wypadku mówimy, że jest to relacja `@OneToMany` - jeden kurs może posiadać wiele ocen. Wartość `mappedBy` wskazuje które pole w klasie `Grade` jest odpowiedzialne za drugą część mapowania.
+
+**Uwaga** Zauważ, że w klasie `Grade` podajemy mapowanie `@ManyToOne` a w klasie `Course` to samo mapowanie określamy jako `@OneToMany`.
+
+
+##### N-M (wiele do wielu)
+
+W naszym przykładzie relację N-M możemy zaobserwować pomiędzy studentami oraz kursami - jeden student może być przypisany do wielu kursów. W jednym kursie może być wielu studentów.
+
+Zobaczmy jak to wygląda od strony kodu:
+
+W klasie `Course`:
+```java
+@ManyToMany
+@JoinTable(
+    name = "student_course",
+    joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "ID"),
+    inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "ID"))
+private Set<Student> studentSet = new HashSet<>();
+```
+* `@ManyToMany` - deklaracja, że jest to relacja wiele do wielu
+* `@JoinTable` - tworzymy tabelę łącznikową
+  * name - nazwa tabeli
+  * joinColumns - określamy, która kolumny w obecnej tabeli (`Course`) powinna być używana do joinów (kolumna z kluczem obcym)
+  * inverseJoinColumns - określamy, które kolumny w tabeli studentów (`Student`) powinny być używane do joinów
+  * referencedColumnName - pozwala na określenie do której kolumny odnosi się klucz obcy.
+
+A w klasie `Student` wystarczy natomiast zdefiniować adnotację `@ManyToMany` przy odpowiednim atrybucie i dodać informację o mapowanym polu z klasy `Course` (`mappedBy`).

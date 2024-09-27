@@ -1,0 +1,130 @@
+import {Callout} from 'nextra/components'
+import {Steps} from 'nextra/components'
+import {Details} from '../../components/details'
+
+W tej części zadania zajmiemy się dodaniem do naszego systemu warstwy logiki biznesowej. Wzorzec DAO pozwala na separację modelu od warstwy persystencji, ale **klasy DAO nie powinny służyć do realizacji logiki biznesowej, a jedynie do zarządzania zapisem i odczytem danych z bazy**. Aby dodać do systemu operacje realizującą założenia biznesowe, powinniśmy utworzyć dodatkową warstwę, której zadaniem będzie modyfikacja modelu zgodnie z tymi założeniami i delegacja operacji związanych z bazą danych do DAO. W typowej aplikacji klasy realizujące tego typu zadania nazywamy serwisami.
+
+W naszym przykładzie przygotowaliśmy klasę `SchoolService`. Otwórz ją i wykonaj w niej zadania opisane poniżej. 
+
+### Zadania
+
+#### Zapisywanie studenta na dany kurs
+Zaimplementuj metodę `enrollStudent()` w klasie `SchoolService`. Tym razem zamiast ręcznie tworzyć rekord w bazie danych musimy:
+
+1. Dodać studenta do zbioru studentów w klasie `Course`.
+1. Dodać kurs do zbioru kursów w klasie `Student`.
+
+Pamiętaj, że metoda `enrollStudent()` powinna zwracać `false`, jeśli student jest już zapisany na dany kurs!.
+
+<Callout>
+Co należy zrobić by zmiany zostały poprawnie odwzorowane w bazie danych? Jak zapewnić by wszystkie zmiany były wykonane jako jedna, *atomowa* operacja na bazie?
+</Callout>
+
+<br />
+
+<Details>
+Zmiany w bazie są widoczne dopiero gdy zostaną zsynchronizowane z persistence context (`flush()`). Aby poprawnie określić zakres zmian, które powinny być dokonywane w bazie, powinniśmy zawsze w takich sytuacjach tworzyć **transakcję**. Zapoznaj się z informacjami na temat tworzenia transakcji w materiałach poniżej.
+</Details>
+
+<Callout>
+W poprzednim ćwiczeniu (*Active Record*) implementowaliśmy też metodę pozwalającą na pobieranie listy studentów zapisanych na dany kurs. Czy teraz też musimy to robić?
+</Callout>
+
+<br />
+
+<Details>
+Nie. Tym razem w klasie Course posiadamy pole ze zbiorem studentów. Za jego ładowanie odpowiedzialny jest Hibernate.
+</Details>
+
+<Callout type="info">
+Testy weryfikujące poprawne wykonanie zadania: `studentCanBeEnrolledInCourseOnce()`, `courseConsistsOfEnrolledStudents()` 
+</Callout>
+
+#### Ocenianie studenta
+
+Zaimplementuj metodę `gradeStudent()`. W ramach **jednej transakcji** należy:
+
+1. Stworzyć obiekt `Grade`.
+1. Dodać ocenę do zbioru ocen w klasie `Student`.
+1. Dodać ocenę do zbioru ocen w klasie `Course`.
+
+Pamiętaj również, że nowo-utworzony obiekt `Grade` będzie w stanie *Transient*, dopóki nie dodasz go do *persistence context*!
+
+<Callout type="info">
+Test weryfikujący poprawne wykonanie zadania:  `studentCanBeGraded()` 
+</Callout>
+
+####  Usuwanie studenta
+
+Zaimplementuj metodę `removeStudent()`, która powinna całkowicie wypisać studenta o zadanym numerze indeksu ze studiów. W ramach jednej transakcji:
+
+1. Wyszukaj studenta po numerze indeksu.
+2. W przypadku znalezienia studenta skorzystaj z metody `StudentDao#remove()` do oznaczenia encji do usunięcia.
+
+**Wskazówka:** pamiętaj, że student jest połączony z kursem relacją wiele-do-wielu. Zastanów się, co należy jeszcze zrobić przed oznaczeniem samej encji do usunięcia. 
+
+<Callout type="info">
+Test weryfikujący poprawne wykonanie zadania:  `studentCanBeRemovedFromSchool()` 
+</Callout>
+
+#### Tworzenie raportu ocen
+
+Zaimplementuj metodę `getStudentGrades()`, która dla kursu o podanej nazwie sporządza raport ocen wszystkich studentów, którzy na niego uczęszczają. 
+
+Metoda powinna zwracać mapę, której kluczami są  pełne imiona i nazwiska studentów oddzielone spacją (np. `"Piotr Budynek"`), a wartościami listy liczbowych wartości ocen. Zadbaj o to, by oceny każdego studenta były posortowne rosnąco po wartości.
+
+<Callout >
+Jakie operacje są w tym przypadku wykonywane na bazie? Ile z tych operacji trzeba ręcznie wywołać za pośrednictwem DAO?
+</Callout>
+
+<Details>
+Jedyną operacją, jaką trzeba tutaj wykonać jest znalezienie kursu po numerze indeksu. Wszystkie inne dane są dociągane automatycznie przez Hibernate (niejawnie, w osobnych zapytaniach). W tym przypadku widać szczególnie znaczenie strategii pobierania `LAZY/EAGER`.
+</Details>
+
+<Callout type="info">
+Test weryfikujący poprawne wykonanie zadania:  `courseReportCanBeObtained()` 
+</Callout>
+
+### Przydatne informacje
+
+#### Transakcje
+
+W przypadku pracy z bazami danych bardzo ważne jest przestrzeganie zasad pozwalających utrzymać spójność danych. Wszystkie operacje na bazie powinny być opakowywane w transakcje. Hibernate dostarcza do tego narzędzi, które są dostępne z poziomu obiektu `Session`. Typowa transakcja Hibernate wygląda następująco:
+```java
+Transaction transaction = null;
+try {
+    transaction = session.beginTransaction(); // 1
+    modyfiyEntity(entity); // 2
+    transaction.commit(); // 3
+    return Optional.ofNullable(result);
+} catch (Exception e) {
+    e.printStackTrace();
+    if (transaction != null) {
+        transaction.rollback(); // 4
+    }
+}
+return Optional.empty();
+```
+1. Rozpoczęcie transakcji
+1. Wykonanie operacji na encjach
+1. Zakończenie transakcji
+1. Cofnięcie zmian w przypadku błędu
+
+Aby uniknąć powtarzania kodu w naszej aplikacji przygotowaliśmy gotową metodę `TransactionService#doAsTransaction()` zaimplementowaną w `SessionService`. Przyjmuje ona obiekt `Supplier<T>`, a więc można do niej przekazać np. wyrażenie lambda wykonujące operację i zwracające jej rezultat. Przykłady użycia tej metody znajdują się w `GenericDao`:
+```java
+return sessionService.doAsTransaction(() -> {
+        session.persist(object);
+        return object;
+});
+```
+**Uwaga:**  transakcje można, a nawet należy wykonywać również w warstwie serwisu - w klasie `SchoolService` jest dostępny obiekt `TransactionService`.
+
+#### Logowanie zapytań Hibernate
+
+Automatyzacja powiązań między encjami a bazą sprawia, że czasem łatwo stracić kontrolę nad tym, jakie zapytania SQL w jakich sytuacjach są wykonywane w naszym programie. Aby lepiej kontrolować zapytania i uniknąć problemów z wydajnością można włączyć logowanie zapytań. Jeśli chcesz zobaczyć, jakie dokładnie zapytania SQL wykonuje Hibernate w trakcie działania programu, w pliku `src/test/resources/hibernate.cfg.xml` dodaj wpis (pod wpisem `hbm2ddl.auto`):
+
+```
+<property name="hibernate.show_sql">true</property>
+```
+
+Od tej pory w trakcie wykonywania testów widoczne będą w konsoli pełne zapytania SQL.
