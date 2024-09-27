@@ -1,0 +1,51 @@
+### I. Wprowadzenie do RX
+
+Wszystkie ćwiczenia wykonamy na specjalnie przygotowanej aplikacji do wyszukiwania i gromadzenia zdjęć. Nasz program **PhotoCrawler** pozwala na zdefiniowanie szeregu słów kluczowych (*topics*), które następnie są przetwarzane na zapytania do serwisu **DuckDuckGo**. Wszystkie interesujące nas zdjęcia są następnie pobierane i zapisywane na dysk. 
+
+Cztery kluczowe komponenty (klasy) aplikacji zostały przedstawione na diagramie:
+
+![diagram klas modelu](/03-rx/class-diagram.png)
+
+- **PhotoDownloader** - służy do pobierania zdjęć. Utworzone zdjęcia zwracane są jako obiekty modelu typu **Photo**.
+- **PhotoProcessor** - umożliwia analizowanie i przetwarzanie obiektów typu **Photo** (np. tworzenie miniatur).
+- **PhotoSerializer** - zapisuje obiekty typu **Photo** na dysk w oryginalnym formacie.
+- **PhotoCrawler** - zarządza wszystkimi modułami i obsługuje zapytania o zdjęcia.
+
+Naszym celem będzie usprawnienie działania i rozszerzenie PhotoCrawlera o dodatkowe funkcje przy użyciu biblioteki **RxJava**.
+
+Na kolejnych stronach znalazły się zadania, które należy wykonać w podanej kolejności. Na końcu każdego polecenia zostały podane odnośniki do operacji ReactiveX, które należy wykorzystać w rozwiązaniu. Dokumentacja ReactiveX nie podaje szczegółowych opisów API dla RxJava 3.x, ale można je znaleźć [tutaj](http://reactivex.io/RxJava/3.x/javadoc/) oraz w kodzie w formie szczegółowych komentarzy javadoc.
+
+**Po zakończeniu pracy nad każdym z ćwiczeń I-III skonsultuj swoje rozwiązanie z prowadzącym.**
+
+#### Uruchomienie aplikacji
+
+1. Zaimportuj projekt `lab-rx` do IntelliJ (*File -> Open...*). Wszystkie zależności projektu powinny zostać automatycznie pobrane. 
+
+2. Część zadań będzie wymagała użycia wbudowanego scrapera do pobierania obrazów z DuckDuckGo. Korzystamy z Scraper API, które wymaga podania indywidualnego wygenerowanego klucza. Wejdź na [stronę Scraper API](https://dashboard.scraperapi.com/login), załóż tam konto (zajmuje chwilę i NIE trzeba podawać żadnych numerów kart itp). 
+   Następnie znajdź w sekcji *Dashboard* pole ***API Key*** i przeklej jego zawartość do `CrawlerApp` (stała `SCRAPER_API_KEY`).
+
+    **Uwaga:** w darmowej wersji API umożliwia wykonanie 1000 zapytań / miesiąc. Na potrzeby tej i kolejnej laborki w zupełności powinno wystarczyć, ale warto o tym pamiętać.
+
+3. Zapoznaj się z klasami: `PhotoCrawler`, `PhotoDownloader` oraz `PhotoSerializer` i `PhotoProcessor`. Zwróć uwagę przede wszystkim na publiczne metody udostępniane przez te klasy.
+
+4. Uruchom klasę `CrawlerApp`. Na dysku w katalogu projektu powinien się pojawić folder `photos`, a w nim 5 przykładowych zdjęć pobranych przez aplikację.
+
+5. Zaobserwuj, w którym momencie pobrane zdjęcia zapisywane są na dysk. Odpowiedz na pytanie: *Jakich modyfikacji w kodzie należałoby dokonać by każde zdjęcie zapisywało się na dysku natychmiast po pobraniu?*
+
+#### Podstawowe operatory RX
+
+1. Zastosuj mechanizm subskrypcji `RxJava` do pobrania przykładowych zdjęć:
+
+   a) Przepisz metodę `PhotoDownloader#getPhotoExamples` tak by zwracała obiekt typu `Observable<Photo>`. 
+
+    b) Po stronie `PhotoCrawler#downloadPhotoExamples` zdefiniuj subskrypcję na zwracanym obiekcie w taki sposób by w reakcji na emitowane zdjęcie było ono zapisywane na dysk.
+
+    **Operacje do wykorzystania:** [`Just`](http://reactivex.io/documentation/operators/just.html), [`Subscribe`](http://reactivex.io/documentation/operators/subscribe.html)
+
+2. Upewnij się, że zdjęcia są kolejno pobierane i zapisywane na dysk:
+
+   a) Zastanów się, w którym momencie wywołuje się metoda `PhotoDownloader#getPhoto`.
+
+   b) Wykorzystaj operację [`Map`](http://reactivex.io/documentation/operators/map.html) tak by zapewnić, że `PhotoDownloader#getPhoto` zostanie wywołane w trakcie przetwarzania kolejnych zdjęć, a nie podczas tworzenia `Observable`.
+
+   **Operacje do wykorzystania:** [`Map`](http://reactivex.io/documentation/operators/map.html)

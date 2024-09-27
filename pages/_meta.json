@@ -15,6 +15,11 @@
     "type": "page",
     "display": "hidden"
   }, 
+  "03-rx": {
+    "title": "Reaktywne strumienie w RxJava",
+    "type": "page",
+    "display": "hidden"
+  }, 
 
   "menu": {
     "title": "Rozdziały",
@@ -27,6 +32,10 @@
 	  "02-orm": {
         "title": "2. Wzorce persystencji - ORM, DAO, Repository",
         "href": "/02-persistance-orm"
+      },
+	  "03-rx": {
+        "title": "3. Reaktywne strumienie w RxJava",
+        "href": "/03-rx"
       }
     }
   }
