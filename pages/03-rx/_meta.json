@@ -3,6 +3,7 @@
   "02-basic-operators": "Podstawowe operatory RX",
   "03-complex-source": "Tworzenie własnego emitera danych",
   "04-multi-streams": "Obsługa wielu strumieni",
+  "05-extra": "Zadanie dodatkowe",
   "source-code" : {
     "title" : "Kod źródłowy",
     "href" :  "/03-rx/lab-rx.zip"

@@ -1,0 +1,32 @@
+import {Callout} from 'nextra/components'
+
+<Callout type="info">
+Poniższe zadanie nie jest obowiązkowe. Polecamy je wykonać, jeśli zainteresował Cię temat i chcesz lepiej zrozumieć zaawansowane operatory i reaktywny styl tworzenia programów.
+</Callout>
+
+### Zaawansowane metody sterowania strumieniami i przetwarzania danych
+
+Wykonaj poniższe polecenia, aby zrealizować wymaganie funkcjonalne aplikacji:*"Chcemy zapisywać na dysku tylko zdjęcia większe niż 100 kB (mniejsze nie nadają się do analizy). Jednocześnie w przypadku wszystkich pozostałych zdjęć wystarczy nam odpowiednio przeskalowana miniatura."*
+
+1. W `PhotoCrawler` stwórz metodę `processPhotos(Observable<Photo>) : Observable<Photo>`. Metoda posłuży do modyfikacji strumienia danych w taki sposób by wyjściowe dane do zapisu spełniały nasze wymagania
+
+	1. Wykorzystaj odpowiednią metodę z `PhotoProcessor` do **odfiltrowania** zbyt małych zdjęć.
+
+	1. Otrzymany rezultat **przekształć** w taki sposób by pozostałe zdjęcia zostały zamienione na miniatury (`PhotoProcessor#convertToMiniature(Photo)`).
+   
+    **Operacje do wykorzystania:** [`Filter`](http://reactivex.io/documentation/operators/filter.html), [`Map`](http://reactivex.io/documentation/operators/map.html)
+2. Przygotowaną metodę wykorzystaj we wszystkich metodach zapisujących pobierane zdjęcia. Zastosuj zasadę: [*Don`t break the chain!*](http://blog.danlew.net/2015/03/02/dont-break-the-chain/)
+
+	**Operacje do wykorzystania:** [`Compose`](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#compose-io.reactivex.ObservableTransformer-)
+	
+#### Grupowanie danych w strumieniach
+
+Do tej pory dzieliliśmy zdjęcia na małe i pozostałe. Teraz wprowadzimy dodatkowe rozróżnienie na zdjęcia małe, średnie i duże:
+
+- **Małe** zdjęcia powinny być pomijane (tak jak do tej pory).
+- **Średnie** zdjęcia będą zapisywane stosunkowo często, dlatego chielibyśmy je buforować przed zapisem. Bufor powinien opróżniany co 5s, a wszystkie zebrane w nim obrazy zapisane na dysk. 
+- W przypadku **dużych** obrazów będziemy zapisywać miniatury. To czasochłonna operacja więc buforowanie w takim przypadku nie ma sensu. Możemy za to zoptymalzować ich przetwarzanie w taki sposób, by przychodzące duże obrazy lądowały w wątku z puli Schedulera **calculation** i dopiero tam były zamieniane na miniatury. Scheduler sam zadba o to by utrzymać optymalną dla procesora pulę wątków przeznaczonych na długotrwałe obliczenia. W celu zrealizowania tej części zadania zapoznaj się z operacją [`ObserveOn`](http://reactivex.io/documentation/operators/observeon.html) i porównaj ją z poznanym wcześniej [`SubscribeOn`](http://reactivex.io/documentation/operators/subscribeon.html).
+
+	<Callout>
+	Operacja [`GroupBy`](http://reactivex.io/documentation/operators/groupby.html) może się okazać przydatna. Warto także poszukać w dokumentacji dedykowanej funkcji, która pomoże nam zrealizować buforowanie elementów strumienia.
+	</Callout>
