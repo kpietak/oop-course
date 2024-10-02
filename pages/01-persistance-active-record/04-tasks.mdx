@@ -69,7 +69,7 @@ Metoda JOIN pozwala nam na grupowe pobranie danych przez co ograniczamy liczbę 
 </Details>
 
 
-## Usprawnienie pobierania listy studentów (do zrobienia jeśli jest dużo czasu)
+## Usprawnienie pobierania listy studentów
 Załóżmy, że w naszej aplikacji studenci są przypisywani do kursów tylko raz, na samym początku.
 Wiedząc to możemy jeszcze bardziej zoptymalizować pobieranie listy studentów korzystając z bardzo prostego cache. 
 Przy pierwszym wywołaniu metody `cachedStudentsList()` będziemy zapisywać pobraną listę do pola enrolledStudents, a przy kolejnych wywołaniach tej metody będziemy zwracać zapisaną wcześniej listę.
