@@ -14,7 +14,7 @@ Aby to ułatwić warto zajrzeć do działu [Pomoc](05-help). Są tam opisane kw
     * Stworzyć zmienną args, która zawiera w sobie parametry zapytania (w odpowiedniej kolejności).
     * Dodać do tabeli `student` rekord korzystając z metody `QueryExecutor.createAndObtainId()`.
     * Pobrać stworzonego studenta za pomocą metody `Student.findById()`.
-        
+      
         Po wykonaniu tego zadania powinien działać test `studentWithUniqueIndexNumberCanBeCreated()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
 2. W klasie `Student` zaimplementuj metodę `findByIndexNumber()`. Skorzystaj z `QueryExecutor.read()`. Aby to zrobić musisz:
     * Pobrać rekord studenta korzystając z metody `QueryExecutor.read()`.
@@ -34,8 +34,7 @@ Metoda `enrollStudent()` powinna zwracać `true`, jeśli udało się zapisać st
 
 Po wykonaniu tego zadania powinien działać test `studentCanBeEnrolledInCourseOnce()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
 
-<Callout type="info">
-**Pytanie**  
+<Callout>
 
 Jak nazywa się ten rodzaj tabel, które pozwalają na odwzorowanie relacji wiele do wielu?
 </Callout>
@@ -53,8 +52,7 @@ Metoda `Course.studentList()` powinna zwracać listę studentów zapisanych na 
 
 Sprawdź poprawność wykonania tego zadania uruchamiając test `courseConsistsOfEnrolledStudents()` z klasy `ActiveRecordTest`.
 
-<Callout type="info">
-**Pytanie**
+<Callout>
 
 Czy użyłeś metody `Student.findById()` czy klauzuli JOIN? Jaka będzie różnica w wydajności pomiędzy tymi dwoma metodami? 
 </Callout>
@@ -87,8 +85,7 @@ Klasa `Grade` odpowiada pojedynczej ocenie wystawionej studentowi w danym kursie
 Sprawdź poprawność wykonania tego zadania uruchamiając test `studentCanBeGraded()` z klasy `ActiveRecordTest`.
 
 
-<Callout type="info">
-**Pytanie**  
+<Callout>
 
 W jaki sposób w bazie odwzorowujemy powiązanie `Grade` ze `Student` oraz `Course`? Zapisujemy całe obiekty czy tylko jakąś ich część?
 </Callout>
