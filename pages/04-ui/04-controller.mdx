@@ -1,0 +1,32 @@
+import {Callout} from 'nextra/components'
+
+## Połączenie kontrolera z widokiem
+
+Widok naszej aplikacji został przygotowany w pliku `resources/galleryView.fxml`. Musimy teraz połączyć z klasą kontrolera (`GalleryController`), która umożliwi nam komunikację na linii model - widok.
+
+1. Otwórz plik `resources/galleryView.fxml`
+1. Odnajdź w widoku kontrolki odpowiedzialne za wyświetlanie informacji o pojedynczym obrazie. Naszym celem będzie podłączenie nazwy obrazka do edytowalnego pola tekstowego (`TextField`) oraz samego obrazu do kontrolki `ImageView`. Zwróć uwagę, że każda kontrolka posiada identyfikator `fx:id` - będzie to również nazwa odpowiadającego jej atrybutu w klasie kontrolera.
+1. W klasie kontrolera `GalleryController` dodaj atrybut odpowiadający kontrolce do ustawiania nazwy:
+    ```java
+    @FXML
+    private TextField imageNameField; 
+    ```
+1. W analogiczny sposób ustaw kontrolkę do wyświetlania obrazu.
+
+<Callout type="info">
+Prywatne pola i metody, które mają być dostępne z poziomu plików fxml muszą być poprzedzone adnotacją `@FXML`. Dobrym zwyczajem jest, aby wszystkie elementy klasy dostępne w plikach fxml były oznaczane w taki sposób - zwiększa to czytelność kodu.
+</Callout>
+
+## Połączenie kontrolera z modelem
+
+Kolejnym krokiem jest skojarzenie elementów modelu z atrybutami widoku. We wzorcu MVC odpowiada za to kontroler.
+
+1. Do ustawiania zdjęcia w widoku wykorzystywana jest metoda `GalleryController#bindSelectedPhoto()`. Zwróć uwagę, że obecnie po załadowaniu modelu galerii domyślnie zaznaczane jest pierwsze zdjęcie ze zbioru. Wystarczy zatem uzupełnić brakujący kod metody.
+1. Zamiast ustawiać wartości widoku “na sztywno” za pomocą metod typu setText() wykorzystamy do tego mechanizm bindingów i przygotowane wcześniej właściwości FX. Typowy binding wygląda następująco:
+    ```java
+    viewControl.viewProperty().bind(model.modelProperty());
+    ```
+    **Uwaga:** typy łączonych właściwości muszą być zgodne.
+1. Odnajdź odpowiednie właściwości kontrolek imageNameField oraz imageView i skojarz je z ich modelowymi odpowiednikami.
+1. Uruchom aplikację, na tym etapie powinna wyglądać mniej więcej tak:
+    ![app with photo](/04-ui/app-with-photo.png)
