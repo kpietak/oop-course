@@ -63,6 +63,14 @@ imagesListView.getSelectionModel().selectedItemProperty()
     ```
     Po odpaleniu aplikacji powinniśmy wówczas zobaczyć zaznaczenie przy pierwszym zdjęciu oraz podgląd tego zdjęcia w głównym widoku.
 
+
+
+<Callout type="warning">
+
+Zaimplementowanie pozostałych rodzajów interakcji nie jest konieczne do poprawnego działania galerii. Z uwagi na ograniczony czas na zajęciach proponujemy w tym miejscu przejść do [kolejnego rozdziału](/04-ui/06-long-running-ops), a dodatkowe interakcje dokończyć samodzielnie po zajęciach.
+
+</Callout>
+
 ### Interakcja model - serwis: zapisywanie zdjęć
 
 Model w JavieFX może być obserwowany nie tylko przez UI, ale również przez inne serwisy, które chcą na bieżąco śledzić w nim zmiany. W naszym przykładzie chcielibyśmy zapisywać na dysk wszystkie zdjęcia, które pojawią się w galerii. Usunięcie zdjęcia z modelu powinno z kolei spowodować usunięcie powiązanego z nim pliku na dysku.
@@ -95,7 +103,7 @@ Pole tekstowe do zmiany zdjęcia jest jednostronnie powiązane z właściwości�
 1. Przyjrzyj się metodzie `GalleryController#bindPhoto` zamień odpowiednie powiązanie na `bindBidirectional()`.
 
     <Callout type="info">
-    Uwaga: Dwukierunkowe powiązanie nie wyklucza istnienia innych powiązań między właściwościami. Oznacza to, że często przy dodawaniu tego typu bindingu powinniśmy pamiętać o usunięciu starego powiązania. W naszym przypadku powinniśmy w reakcji na zmianę `selectedItemProperty()` wywołać na tekstowym property imageNameField metodę `unbindBidirectional()` i podać jej właściwość aktualnie wyświetlanego zdjęcia (dostępnego pod `oldValue`). Należy też pamiętać o obsłudze przypadku brzegowego, gdy nic zostało wcześniej zaznaczone i `oldValue` jest nullem.
+    Dwukierunkowe powiązanie nie wyklucza istnienia innych powiązań między właściwościami. Oznacza to, że często przy dodawaniu tego typu bindingu powinniśmy pamiętać o usunięciu starego powiązania. W naszym przypadku powinniśmy w reakcji na zmianę `selectedItemProperty()` wywołać na tekstowym property imageNameField metodę `unbindBidirectional()` i podać jej właściwość aktualnie wyświetlanego zdjęcia (dostępnego pod `oldValue`). Należy też pamiętać o obsłudze przypadku brzegowego, gdy nic zostało wcześniej zaznaczone i `oldValue` jest nullem.
     </Callout>
 
 1. W `PhotoSerializer` dodaj w odpowiednim miejscu obserwatora (listener) na `nameProperty()` pojedynczego zdjęcia:

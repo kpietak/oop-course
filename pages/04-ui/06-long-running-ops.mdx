@@ -43,10 +43,16 @@ Aby przetestować nasze GUI dodamy do niego jeszcze jeden element - wyszukiwark�
     Wykorzystaj powyższy mechanizm by opakować dodawanie zdjęć do modelu galerii otrzymywanych podczas wyszukiwania.
 
     <Callout type="info">
-    Uwaga: Zamiast używać `Platform.runLater()` możesz też skorzystać RX-owego operatora `observeOn()` oraz biblioteki RxJavaFx, która dostarcza m. in. specjalny `Scheduler`, z którego można korzystać wymiennie z innymi:
+    Zamiast używać `Platform.runLater()` możesz też skorzystać RX-owego operatora `observeOn()` oraz biblioteki RxJavaFx, która dostarcza m. in. specjalny `Scheduler`, z którego można korzystać wymiennie z innymi:
     ```java
     source.subscribeOn(Schedulers.io())
         .observeOn(JavaFxScheduler.platform())
         .subscribe(/* do some UI-dependendent modifications here */);
     ```
     </Callout>
+
+<Callout type="warning">
+
+Zauważ, że duży narzut czasowy generuje nie tylko samo wyszukiwanie w internecie, ale także zapisywanie zdjęć na dysk. Po wykonaniu wszystkich zadań przeanalizuj metodę `PhotoSerializer#savePhoto`. Zastanów się, jaki mechanizm został w niej zastosowany i jak wpływa on na responsywność aplikacji. 
+
+</Callout>
