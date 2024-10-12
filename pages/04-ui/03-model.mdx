@@ -1,0 +1,44 @@
+import {Callout} from 'nextra/components'
+
+## Dostowanie modelu danych
+
+Model naszej przykładowej aplikacji musi zostać zmodyfikowany tak, aby w prosty sposób synchronizować jego stan z informacjami wyświetlanymi na ekranie. W tym celu JavaFX wprowadza mechanizm właściwości (Properties), które posiadają wbudowane mechanizmy notyfikacji o zmianach swoich wartości.
+
+Więcej na ten temat znajdziesz na stronie Using JavaFX Properties and Binding.
+
+## Zadania
+
+1. Sprawdź jakie metody definiuje interfejs [Property](https://openjfx.io/javadoc/23/javafx.base/javafx/beans/property/Property.html)?
+1. Wyjaśnij zasadę działania mechanizmu właściwości w JavaFX.
+1. Dla potrzeb naszej prostej aplikacji, konieczne będzie opakowanie atrybutów obiektów modelu we właściwości odpowiedniego typu. W tym celu:
+    1. Otwórz klasę `Photo`
+    1. Przekształć każdy z atrybutów, podmieniając jego typ na odpowiadające mu `Property`.
+        <Callout type="info">
+        W przypadku typów prymitywnych JavaFX defniuje proste odpowiedniki, na zasadzie `int` -> `IntegerProperty`, `String` -> `StringProperty`. W przypadku innych typów należy użyć `ObjectProperty<T>`. 
+        </Callout>
+    1. Dostosuj gettery i ewentualne settery tak by API się nie zmieniło. Wykorzystaj metody `Property#get()` oraz `Property#set()`. 
+    1. W każdym przypadku dodaj metodę `xProperty()`, gdzie `x` to nazwa atrybutu. Metoda powinna zwracać cały obiekt właściwości, który wykorzystamy potem do podłączenia widoku.
+
+Ogólny schemat modelu przekształconego na potrzeby JavaFX:
+
+```java
+public class ModelClass {
+    private IntegerProperty attribute;
+
+    public ModelClass(..., int initialValue, ...) {
+        this.attribute = new SimpleIntegerProperty(initialValue);
+    }
+
+    public int getAttribute() {
+        return attribute.get();
+    }
+
+    public void setAttribute(int value) {
+        this.attribute.set(value);
+    }
+
+    public IntegerProperty attributeProperty() {
+        return attribute;
+    }
+}
+```
