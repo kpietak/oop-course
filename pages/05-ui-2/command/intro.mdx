@@ -1,0 +1,29 @@
+import {Cards, Card, Callout} from 'nextra/components'
+
+### Przygotowanie do ćwiczenia
+
+#### Importowanie projektu
+<Cards>
+    <Card title="&#11015; Pobierz kod źródłowy" href="/05-ui-2/lab-command.zip"/>
+</Cards>
+
+1. Zaimportuj projekt *lab-command* do IntelliJ:
+  1. Pobierz projekt i rozpakuj.
+  1. Zaimportuj gotowy projekt do IntelliJ: *File -> Open…* i poczekaj, aż Gradle pobierze wszystkie zależności.
+
+#### Uruchomienie aplikacji JavaFX
+
+Aplikację uruchamiamy w podobny sposób jak w pierwszej części zadania ze wzorcem MVP.
+
+### Wprowadzenie
+
+Celem ćwiczenia będzie zapoznanie się z wzorcem *Command* i zastosowanie go w naszej aplikacji. Zastąpienie podstawowych operacji komendami umożliwi nam stworzenie **dziennika poleceń** i **cofanie operacji użytkownika**. 
+
+Na potrzeby ćwiczenia dokonaliśmy kilku zmian w aplikacji:
+
+1. Dodaliśmy pakiet `command` oraz kluczowe klasy:
+	- `Command` - interfejs dla wszystkich obsługiwanych komend
+	- `CommandRegistry` - rejestr, umożliwiający przechowywanie i wywoływanie komend
+2. Rozszerzyliśmy interfejs graficzny aplikacji o kontrolkę dziennika zdarzeń **(1)** oraz przyciski *Undo* i *Redo* **(2)**. Kontrolki te są na razie nieaktywne - po zakończeniu ćwiczenia dziennik powinien wyświetlać listę wywołanych operacji, a przyciski *Undo* i *Redo* umożliwić ich cofanie i ponawianie.
+
+    ![nowe funkcje aplikacji](/05-ui-2/new-features.png)

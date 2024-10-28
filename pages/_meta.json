@@ -25,6 +25,11 @@
     "type": "page",
     "display": "hidden"
   }, 
+  "05-ui-2": {
+    "title": "Zaawansowane wzorce interfejsu graficznego",
+    "type": "page",
+    "display": "hidden"
+  }, 
 
   "menu": {
     "title": "Rozdziały",
@@ -45,6 +50,10 @@
       "04-ui": {
         "title": "4. Wzorce interfejsu graficznego",
         "href": "/04-ui"
+      },
+	  "04-ui-2": {
+        "title": "5. Zaawansowane wzorce interfejsu graficznego",
+        "href": "/05-ui-2"
       }
     }
   }
