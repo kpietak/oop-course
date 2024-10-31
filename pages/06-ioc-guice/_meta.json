@@ -1,8 +1,12 @@
 {
   "index": "Wprowadzenie",
-  "intro": "Przygotowanie",
-  "manual-di": "Manualne wstrzykiwanie zależności",
-  "ioc-basic": "Wstrzykiwanie zależności z Guice",
-  "named": "Zależności nazwane",
-  "scope": "Zasięg Singleton"
+  "02-preparation": "Przygotowanie",
+  "03-manual-di": "Manualne wstrzykiwanie zależności",
+  "04-ioc-basic": "Wstrzykiwanie zależności z Guice",
+  "05-named": "Zależności nazwane",
+  "06-scope": "Zasięg Singleton",
+  "source-code" : {
+    "title" : "Kod źródłowy",
+    "href" :  "/06-ioc-guice/lab-ioc.zip"
+  }
 }
