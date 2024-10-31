@@ -1,0 +1,25 @@
+## Przygotowanie
+
+1. Zaimportuj projekt `lab-gui-gallery` do IntelliJ:
+1. Pobierz projekt i rozpakuj.
+1. Zaimportuj gotowy projekt do IntelliJ: File -> Open... i poczekaj, aż Gradle pobierze wszystkie zależności.
+1. W klasie `Main` uzupełnij klucz do `ScraperAPI` (podobnie jak na poprzednim laboratorium - tutaj również będziemy pobierać obrazki przez DuckDuckGo).
+1. Zapoznaj się z elementami aplikacji:
+   - Model danych galerii obrazów (pakiet `model`)
+   - Kontroler dla widoku galerii (klasa `GalleryController`)
+   - Stub widoku (plik `resources/view/galleryView.fxml`)
+   - Narzędzia do pobierania i zapisywania obrazów (`PhotoDownloader`, `PhotoSerializer`)
+
+## Uruchomienie aplikacji JavaFX
+
+Jak w każdym programie Java, aby uruchomić aplikację potrzebna jest klasa z metodą `main`. W tym celu została stworzona klasa Main, która jednak ładuje tylko aplikację `GalleryApp`. Wystartuje ona nasze GUI, wyświetlając gotowy widok `galleryView.fxml`. Klasa aplikacji JavaFX zawsze rozszerza klasę `javafx.application.Application`.
+
+Aby uruchomić program uruchom klasę `Main` lub skorzystaj z przygotowanej wcześniej konfiguracji `lab-gui-run` (znajduje się w katalogu run). W ten sposób oddelegujemy uruchamianie do Gradle’a, w którym skonfigurowaliśmy już odpowiednio moduły JavyFX. Uruchomienie aplikacji bezpośrednio przez klasę `GalleryApp` nie zadziała bez zainstalowania osobno SDK JavyFX.
+
+Uwaga: Jeśli przygotowana konfiguracja nie działa lub jest niewidoczna, można zamiast tego wykonać polecenie `gradlew run` z terminala lub wybrać task run w zakładce Gradle w IntelliJ.
+
+Komentarz: Najważniejszym elementem klasy startowej jest metoda `start`, która jest wołana automatycznie przy uruchomieniu metody `launch`. Metoda `start` przyjmuje jako parametr scenę (`Stage`), na której będziemy rozmieszczać wszystkie kontrolki UI. Więcej na temat sceny i struktury elementów UI w JavaFX znajdziesz na stronie [Scene Graph](https://fxdocs.github.io/docs/html5/#_scene_graph).
+
+Po uruchomieniu programu powinniśmy najpiew zobaczyć w konsoli informację o pobraniu przykładowych zdjęć, po czym okienko z szkieletem naszego GUI:
+
+![początkowy ekran aplikacji](/04-ui/gui-empty.png)

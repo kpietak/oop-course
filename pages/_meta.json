@@ -20,6 +20,16 @@
     "type": "page",
     "display": "hidden"
   }, 
+  "04-ui": {
+    "title": "Wzorce interfejsu graficznego",
+    "type": "page",
+    "display": "hidden"
+  }, 
+  "05-ui-2": {
+    "title": "Zaawansowane wzorce interfejsu graficznego",
+    "type": "page",
+    "display": "hidden"
+  }, 
 
   "menu": {
     "title": "Rozdziały",
@@ -36,6 +46,14 @@
 	  "03-rx": {
         "title": "3. Reaktywne strumienie w RxJava",
         "href": "/03-rx"
+      },
+      "04-ui": {
+        "title": "4. Wzorce interfejsu graficznego",
+        "href": "/04-ui"
+      },
+	  "04-ui-2": {
+        "title": "5. Zaawansowane wzorce interfejsu graficznego",
+        "href": "/05-ui-2"
       }
     }
   }

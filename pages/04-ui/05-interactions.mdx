@@ -1,0 +1,120 @@
+import {Callout} from 'nextra/components';
+import {Details} from '../../components/details';
+
+## Obsługa listy zdjęć
+
+1. W kodzie FXML znajdź kontrolkę odpowiadającą za wyświetlanie listy miniaturek zdjęć i podepnij ją jako atrybut w GalleryController w analogiczny sposób do poprzedniego zadania. Uwaga: kontrolka ListView jest parametryzowana typem przechowywanego elementu więc należy się upewnić, że atrybut jest zadeklarowany jako `ListView<Photo>`.
+1. Kontrolka listy jest nieco bardziej złożona i wymaga skonfigurowania sposobu wyświetlania jej zawartości. Tego typu operacje możemy wykonać w metodzie `GalleryController#initialize()`. Wykorzystaj poniższy kod:
+
+    ```java
+    imagesListView.setCellFactory(param -> new ListCell<>() {
+        @Override
+        protected void updateItem(Photo item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                ImageView photoIcon = new ImageView(item.getPhotoData());
+                photoIcon.setPreserveRatio(true);
+                photoIcon.setFitHeight(50);
+                setGraphic(photoIcon);
+            }
+        }
+    });
+    ```
+
+1. Teraz wystarczy zainicjować kontrolkę modelem galerii. W metodzie `GalleryController#setModel()` dodaj kod:
+
+    ```java
+    imagesListView.setItems(gallery.getPhotos());
+    ```
+    ... i zastanów się, czemu się nie kompiluje oraz jak to naprawić!
+
+    <Details>
+    Lista, której używa model galerii również powinna być obserwowalna, żeby kontrolki z niej korzystające mogły śledzić wszelkie zmiany. Taką listę można zainicjować w następujący sposób:
+    ```java
+    ObservableList<Photo> photos = FXCollections.observableArrayList();
+    ```
+    </Details>
+
+1. Uruchom aplikację. Jeśli wszystko poszło ok, zobaczysz listę przykładowych zdjęć: 
+
+## Interakcje w GUI
+
+### Interakcja widok - widok: selekcja zdjęcia
+
+W reakcji na zaznaczenie zdjęcia na liście (kliknięcie) chcielibyśmy podpinać je i wyświetlać w głównym widoku. Jest to przykład interakcji między widokami, w której zmienia się jedynie model selekcji samej kontrolki, do którego mamy dostęp poprzez wywołanie:
+
+```java
+imagesListView.getSelectionModel().selectedItemProperty()
+```
+
+1. W metodzie `initialize()` dodaj dodatkową konfigurację, która będzie nasłuchiwać na zmiany w `selectedItemProperty()` i dla każdej nowej wartości wywoła `bindSelectedPhoto()`.
+
+    Zwróć uwagę, że właściwości FX-owe możemy nie tylko wiązać ze sobą, ale również dodawać do nich obserwatorów. Skorzystaj z metody:
+
+    ```java
+    property.addListener((observable, oldValue, newValue) -> ...)
+    ```
+1. Od teraz możemy uzależnić wyświetlanie głównego zdjęcia jedynie od selekcji - podczas ustawiania modelu galerii warto usunąć ręczne bindowanie pierwszego zdjęcia z kolekcji i zastąpić je instrukcją:
+    ```java
+    imagesListView.getSelectionModel().select(0);
+    ```
+    Po odpaleniu aplikacji powinniśmy wówczas zobaczyć zaznaczenie przy pierwszym zdjęciu oraz podgląd tego zdjęcia w głównym widoku.
+
+
+
+<Callout type="warning">
+
+Zaimplementowanie pozostałych rodzajów interakcji nie jest konieczne do poprawnego działania galerii. Z uwagi na ograniczony czas na zajęciach proponujemy w tym miejscu przejść do [kolejnego rozdziału](/04-ui/06-long-running-ops), a dodatkowe interakcje dokończyć samodzielnie po zajęciach.
+
+</Callout>
+
+### Interakcja model - serwis: zapisywanie zdjęć
+
+Model w JavieFX może być obserwowany nie tylko przez UI, ale również przez inne serwisy, które chcą na bieżąco śledzić w nim zmiany. W naszym przykładzie chcielibyśmy zapisywać na dysk wszystkie zdjęcia, które pojawią się w galerii. Usunięcie zdjęcia z modelu powinno z kolei spowodować usunięcie powiązanego z nim pliku na dysku.
+
+1. Otwórz klasę `PhotoSerializer` i znajdź metodę `registerGallery()`.
+
+1. Do obserwowalnej listy zdjęć z modelu galerii dodaj nasłuchiwanie zgodnie ze schematem (zamiast Element zastosuj typ Photo):
+
+    ```java
+    observableList.addListener((ListChangeListener<? super Element>) change -> {
+    while (change.next()) {
+        if (change.wasAdded()) {
+            change.getAddedSubList().forEach(element -> {
+                // do something with added element
+            });
+        } else if (change.wasRemoved()) {
+            change.getRemoved().forEach(element -> {
+                // do something with removed element
+            });
+        }
+    }
+    });
+    ```
+1. Odnajdź w `PhotoSerializer` odpowiednie metody to zapisu i usuwania zdjęć i uzupełnij kod obserwatora. Przetestuj działanie programu - jeśli wszystko poszło ok, wyświetlone zdjęcia powinny zapisać się w katalogu `photos` w projekcie.
+
+### Interakcja model - widok: zmiana nazwy zdjęcia
+
+Pole tekstowe do zmiany zdjęcia jest jednostronnie powiązane z właściwością name w modelu zdjęcia. Zamiast tego chcielibyśmy aby zmiana nazwy zdjęcia w polu tekstowym w UI powodowała również zmianę właściwości name w modelu, a w konsekwencji również powiązanego z nim pliku na dysku.
+
+1. Przyjrzyj się metodzie `GalleryController#bindPhoto` zamień odpowiednie powiązanie na `bindBidirectional()`.
+
+    <Callout type="info">
+    Dwukierunkowe powiązanie nie wyklucza istnienia innych powiązań między właściwościami. Oznacza to, że często przy dodawaniu tego typu bindingu powinniśmy pamiętać o usunięciu starego powiązania. W naszym przypadku powinniśmy w reakcji na zmianę `selectedItemProperty()` wywołać na tekstowym property imageNameField metodę `unbindBidirectional()` i podać jej właściwość aktualnie wyświetlanego zdjęcia (dostępnego pod `oldValue`). Należy też pamiętać o obsłudze przypadku brzegowego, gdy nic zostało wcześniej zaznaczone i `oldValue` jest nullem.
+    </Callout>
+
+1. W `PhotoSerializer` dodaj w odpowiednim miejscu obserwatora (listener) na `nameProperty()` pojedynczego zdjęcia:
+
+    ```java
+    photo.nameProperty().addListener((observable, oldValue, newValue) -> {
+        renamePhoto(oldValue, newValue);
+    });
+    ```
+
+    W którym miejscu należy dodać tego listenera i dlaczego?
+
+1. Przetestuj działanie programu. W momencie zmiany nazwy w polu tekstowym powinna automatycznie zmieniać się też nazwa pliku w katalogu `photos`.
+

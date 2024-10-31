@@ -1,0 +1,12 @@
+{
+  "index": "Wprowadzenie",
+  "02-preparation": "Przygotowanie",
+  "03-model": "Model",
+  "04-controller" : "Kontroler",
+  "05-interactions" : "Interakcje w GUI",
+  "06-long-running-ops" : "Obsługa długotrwałych operacji",
+  "source-code" : {
+    "title" : "Kod źródłowy",
+    "href" :  "/04-ui/lab-gui-gallery.zip"
+  }
+}

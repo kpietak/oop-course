@@ -1,0 +1,58 @@
+import {Callout} from 'nextra/components';
+
+## Kontrolka wyszukiwania zdjęć
+
+Aby przetestować nasze GUI dodamy do niego jeszcze jeden element - wyszukiwarkę. Jako mechanizmu wyszukiwania użyjemy kodu znanego z poprzednich zajęć.
+
+1. W pliku FXML do górnego HBoxa dodaj dwie kontrolki - pole tekstowe oraz przycisk wyszukiwania:
+    ```xml
+    <TextField fx:id="searchTextField" promptText="Enter search query..." prefWidth="580"/>
+    <Button text="Search" />
+    ```
+1. W kodzie kontrolera podepnij kontrolkę searchTextField, a następnie dodaj pustą metodę, która będzie wywoływana w reakcji na kliknięcie w przycisk:
+    ```java
+    public void searchButtonClicked(ActionEvent event) {
+        
+    }
+    ```
+1. W widoku FXML powiąż przycisk z metodą dodając do niego atrybut `onAction="#searchButtonClicked"`.
+
+1. Uruchom program, gotowe okienko powinno wyglądać tak jak poniżej:
+
+![full app](/04-ui/full-app.png)
+
+## Obsługa asynchronicznego wyszukiwania
+
+1. W przygotowanej metodzie `searchButtonClicked()` stwórz instancję PhotoDownloader.
+
+1. Przygotuj obsługę wyszukiwania w następujący sposób:
+
+    - Wyczyść obecną galerię (`Gallery#clear()`).
+    - Wywołaj metodę `PhotoDownloader#searchForPhotos()` przekazując do niej zawartość pola `searchTextField`.
+    - Zasubskrybuj się na otrzymanym `Observable` w taki sposób by każde zdjęcie przychodzące ze strumienia było dodawane do modelu galerii (`Gallery#addPhoto()`).
+
+1. Przetestuj otrzymane rozwiązanie. Zastanów się, dlaczego aplikacja nie jest responsywna w czasie wyszukiwania (po kliknięciu w przycisk `Search`).
+
+1. Ustaw strumień pobierający zdjęcia tak by wyszukiwanie wykonywało się w osobnym wątku (operator `subscribeOn()`). Przetestuj ponownie cały mechanizm. Spojrzyj też w logi aplikacji na konsoli. Czy obserwujesz jakieś niestandardowe wyjątki? Dlaczego?
+
+1. Aby zabezpieczyć wykonywanie operacji w UI każda operacja aktualizująca nasłuchiwany model powinna być wykonywana w wątku FX. Służy do tego mechanizm runLater():
+    ```java
+    Platform.runLater(() -> /* add something to event queue of the UI thread */ );
+    ```
+
+    Wykorzystaj powyższy mechanizm by opakować dodawanie zdjęć do modelu galerii otrzymywanych podczas wyszukiwania.
+
+    <Callout type="info">
+    Zamiast używać `Platform.runLater()` możesz też skorzystać RX-owego operatora `observeOn()` oraz biblioteki RxJavaFx, która dostarcza m. in. specjalny `Scheduler`, z którego można korzystać wymiennie z innymi:
+    ```java
+    source.subscribeOn(Schedulers.io())
+        .observeOn(JavaFxScheduler.platform())
+        .subscribe(/* do some UI-dependendent modifications here */);
+    ```
+    </Callout>
+
+<Callout type="warning">
+
+Zauważ, że duży narzut czasowy generuje nie tylko samo wyszukiwanie w internecie, ale także zapisywanie zdjęć na dysk. Po wykonaniu wszystkich zadań przeanalizuj metodę `PhotoSerializer#savePhoto`. Zastanów się, jaki mechanizm został w niej zastosowany i jak wpływa on na responsywność aplikacji. 
+
+</Callout>
