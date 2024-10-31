@@ -1,0 +1,8 @@
+{
+  "index": "Wprowadzenie",
+  "intro": "Przygotowanie",
+  "manual-di": "Manualne wstrzykiwanie zależności",
+  "ioc-basic": "Wstrzykiwanie zależności z Guice",
+  "named": "Zależności nazwane",
+  "scope": "Zasięg Singleton"
+}

@@ -1,0 +1,14 @@
+import {Callout} from 'nextra/components'
+
+## Zależności nazwane
+
+Dodaj konfigurację persistence managera tak, aby dane były zapisywane do plików `guice-teachers.dat` oraz `guice-classes.dat`:
+
+1. Oznacz adnotacją `@Inject` settery ustawiające ścieżki do plików konfiguracyjnych oraz ich parametry adnotacją `@Named` (https://github.com/google/guice/wiki/BindingAnnotations#named)
+1. Dodaj konfigurację do `SchoolModule` w podobny sposób jak poprzednio, tym razem wykorzystując jednak dodatkową adnotację `@Named`. 
+1. Przetestuj działanie wykorzystując klasę `SchoolDemo`
+
+
+<Callout type="info">
+Zamiast wiązać elementy po nazwie (String) można zamiast tego definiować własne adnotacje. Ten sposób został opisany w dokumentacji (https://github.com/google/guice/wiki/BindingAnnotations). W ramach dodatkowego zadania domowego spróbuj zamienić tekstowe identyfikatory na adnotacje. Zastanów się, jakie zalety ma takie podejście.
+</Callout>

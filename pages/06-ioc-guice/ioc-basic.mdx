@@ -1,0 +1,11 @@
+## Wstrzykiwanie zależności z Guice
+
+W tym ćwieczeniu wykorzystamy bibliotekę Guice do tworzenia instancji klasy `School`, która powinna mieć zaincjalizowaną referencję do odpowiedniego persistance managera.
+
+1. Zdefiniuj zależności w klasach instancjonowanych przez kontener Guice. Wykorzystaj adnotację `@Inject` do oznaczenia konstruktorów, pól lub metod.
+1. Dodaj pakiet `pl.edu.agh.school.guice`.
+1. Utwórz w nowym pakiecie klasę `SchoolModule`, która będzie zawierać konfigurację kontenera IoC. Klasa ta będzie m.in. definiować tzw. bindingi pomiędzy typami (interfejsami i klasami je realizującymi). Klasa `SchoolModule` rozszerza klasę `com.google.inject.AbstractModule`.
+1. Zaimplementuj metodę `providePersistenceManager()`, tak aby kojarzyła implementację `SerializablePersistenceManager` z interfejsem `PersistenceManager` (zobacz więcej: https://github.com/google/guice/wiki/LinkedBindings).
+1. W klasie `SchoolDemo` utwórz nowy obiekt kontener (`injector`) i wykorzystaj go to utworzenia obiektu `School`. (zobacz więcej: https://github.com/google/guice/wiki/GettingStarted#guice-injectors)
+1. Uruchom program i sprawdź czy daje takie same wyniki jak przed rozpoczęciem ćwiczenia.
+

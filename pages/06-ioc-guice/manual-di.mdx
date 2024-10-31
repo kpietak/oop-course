@@ -1,0 +1,8 @@
+## Manualne wstrzykiwanie zależności
+
+1. Zastanów się jakich zmian w kodzie aplikacji należy dokonać, tak aby móc podmieniać persistence manager'a (np. w celu podłączania kilku różnych źródeł danych).
+  1. Zastanów się nad rozwiązaniem i zaproponuj swój pomysł prowadzącemu.
+  1. Po akceptacji prowadzącego, dokonaj wszystkich potrzebnych zmian w implementacji aplikacji szkoły.
+1. Dodaj możliwość konfiguracji `SerializablePersistenceManager` tak, aby dało się zdefiniować pliki, w których będą przechowywane dane.
+  1. Dodaj odpowiednie settery ustawiające pliki konfiguracyjne.
+  1. Zmodyfikuj kod aplikacji, podając własne nazwy plików konfiguracyjnych przez przygotowane settery. W którym miejscu zamieścisz ten fragment inicjujący?  Zastanów się, jakie wady ma takie rozwiązanie.

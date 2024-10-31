@@ -1,0 +1,9 @@
+## Przygotowanie
+
+1. Zaimportuj projekt:
+  1. Pobierz projekt i rozpakuj.
+  1. Zaimportuj gotowy projekt do IntelliJ: *File -> Open...* i poczekaj, aż Gradle pobierze wszystkie zależności.
+1. Projekt zawiera prosty system do zarządzania szkołą. Z punktu widzenie niniejszego laboratorium istotnym elementem projektu jest klasa `SerializablePersistenceManager`, która daje możliwość zapisu klas (`SchoolClass`) i nauczycieli (`Teacher`) do pliku (za pomocą mechanizmu serializacji) - szczegóły na diagramie klas. Podczas każdego wywołania metody `SchoolDAO.addTeacher(Teacher)` oraz `SchoolDAO.addClass(SchoolClass)`, dane klas i nauczycieli są zapisywane do pliku. 
+![](/06-ioc-guice/PersistenceManager.png)
+1. Uruchom dwukrotnie program `SchoolDemo` w celu weryfikacji mechanizmu persystencji danych: przy pierwszym uruchomieniu dane są inicjalizowane z kodu, za drugim są czytane z plików `teachers.dat` i `classes.dat`.
+
