@@ -1,0 +1,14 @@
+
+## Zasieg Singleton
+
+
+Korzystając z mechanizmu automatycznego wstrzykiwania zależności możemy również zastępować statyczne "zmienne globalne" oraz singletony. 
+W ten sposób eliminujemy problemy tego typu rozwiązań, wprowadzając możliwość swobodnego konfigurowania i testowania takich obiektów.
+
+W tym ćwiczeniu skupimy się na przekształceniu klasy `Logger` z singletona w obiekt o specjalnym *zasięgu*.
+
+1. Dodaj zależność od loggera (typu `pl.edu.agh.logger.Logger`) w `SerializablePersistenceManager`. (jako nie-statyczny atrybut klasy).
+1. Dodaj logowanie operacji zapisu i odczytu nauczycieli i klas (pamiętaj o usunięciu plików z danymi: `teachers.dat` i `classes.dat`).
+1. Ustaw logger tak, aby logował wszystkie komunikaty do pliku `persistence.log`. Wykorzystaj do tego celu kontener IoC (injector Guice'a).
+1. Obiekt klasy `Logger` powinien być tworzony tylko raz przez kontener IoC. Wykorzystaj do tego celu adnotację `@Singleton` (​https://github.com/google/guice/wiki/Scopes). Napisz test, który to sprawdza (`pl.edu.agh.school.guice.SchoolModuleTest`).
+1. Pozbądź się statycznego inicjowania `Logger.getInstance()` również z klasy `School`. Co należałoby zrobić by `Logger` był zarządzany przez Guice'a również w klasie `SchoolClass`?

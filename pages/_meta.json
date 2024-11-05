@@ -30,6 +30,11 @@
     "type": "page",
     "display": "hidden"
   }, 
+  "06-ioc-guice": {
+    "title": "Wstrzykiwanie zależności",
+    "type": "page",
+    "display": "hidden"
+  }, 
 
   "menu": {
     "title": "Rozdziały",
@@ -51,10 +56,14 @@
         "title": "4. Wzorce interfejsu graficznego",
         "href": "/04-ui"
       },
-	  "04-ui-2": {
+	  "05-ui-2": {
         "title": "5. Zaawansowane wzorce interfejsu graficznego",
         "href": "/05-ui-2"
-      }
+      },
+      "06-ioc-guice": {
+          "title": "6. Wstrzykiwanie zależności",
+          "href": "/06-ioc-guice"
+        }
     }
   }
 }
