@@ -1,0 +1,33 @@
+# Logika aplikacji
+
+## Rozbudowa modelu danych
+
+1. Rozszerz model o nowe klasy umożliwiające zapisywanie studentów na dany kurs / przedmiot oraz wystawianie ocen. Dodaj klasy `Course` oraz `Grade`, zgodnie z poniższym diagramem. 
+
+![Model](/07-spring/model.png)
+
+2. Wygeneruj przykładowe dane w klasie konfiguracji: utwórz dwa przedmioty, dodaj do nich po kilku studentów, a następnie utwórz oceny z każdego przedmiotu.
+
+3. Napisz kontrolery, które udostępnią informacje o studentach i przedmiotach:
+    1. Dodaj metodę do pobierania wszystkich przedmiotów. Czy json zwrócony przez zapytanie zawiera również dane o studentach? Dlaczego? Jak to kontrolować?
+    1. Dodaj metodę do pobierania studentów zapisanych na przedmiot o podanym id. W tym celu stwórz nowy mapping w kontrolerze kursu i wykorzystaj mechanizm `@PathVariable`.
+
+## Praca z API i rozbudowa warstwy usług
+
+1. Dodaj metodę do pobierania studenta po numerze indeksu:
+Wskazówka: kontroler powinien udostępniać taką usługę pod adresem: `/students?indexNumber=x`. Wykorzystaj adnotację `@RequestParam`. Zadbaj o to by parametr był opcjonalny (żeby dalej dalo się pobierać pełną listę studentów). Więcej na temat obsługi parametrów [tutaj](https://www.baeldung.com/spring-requestparam-vs-pathvariable).
+W warstwie repozytorium dodaj odpowiednie zapytanie korzystając z tzw. [query method](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods).
+
+1. W dalszych krokach będziemy m. in. tworzyli zapytania innego typu niż GET, do przetestowania których nie wystarczy już sama przeglądarka. Można korzystać z zewnętrznych narzędzi (curl, Postman), ale w przypadku projektu Spring Boot bardzo łatwo podpiąć narzędzie do generowania interaktywnej dokumentacji API -  Swagger. Aby go skonfigurować wystarczy dodać do gradle'a paczkę:
+    ```
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
+    ```
+    Po ponownym uruchomieniu aplikacji Swagger będzie dostępny pod domyślnym adresem:
+http://localhost:8080/swagger-ui.html 
+
+1. Dodaj do kontrolera dla studenta możliwość wystawiania oceny końcowej z danego przedmiotu. Jakiego typu zapytanie REST będzie tutaj potrzebne? W zadaniu konieczne będzie wykorzystanie adnotacji `@Transactional`. Dlaczego?
+Przetestuj rozwiązanie z wykorzystaniem Swaggera.
+
+1. Dodaj usługę w `StudentService`, która umożliwi wyliczenie średniej dla studenta, ze wszystkich przedmiotów, na które jest zapisany.
+
+1. ⭐ Dodaj usługę w `CourseService`, która umożliwi wyliczenie średniej dla przedmiotu, dla wszystkich studentów zapisanych na ten przedmiot. Spróbuj zrealizować to zadanie w całości po stronie bazy danych, tj. tworząc odpowiednie zapytanie w warstwie repozytorium. Tym razem może być to niemożliwe przy użyciu standardowego query method - w takiej sytuacji możemy napisać własne query w JPQL.

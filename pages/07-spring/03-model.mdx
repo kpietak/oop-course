@@ -1,0 +1,83 @@
+
+
+# Model i udostępnienie danych
+
+## Model danych - pierwsza klasa
+
+Utwórz pakiet `pl.edu.agh.to.school.student`, a w tym pakiecie klasę `Student`. W tej klasie utwórz kilka atrybutów.:
+- identyfikator,
+- imię,
+- nazwisko,
+- data urodzenia,
+- numer indeksu.
+
+```java
+public class Student {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private LocalDate birthDate;
+    private String indexNumber;
+}
+```
+
+Dodaj do klasy gettery i konstruktor. 
+
+import { Callout } from 'nextra/components'
+ 
+<Callout type="info" emoji="ℹ️">
+    Uwaga: konstruktor powinien ustawiać wszystkie atrybuty oprócz `id`. Gdy dodamy do naszego przykładu bazę danych, skonfigurujemy model tak by `id` generowało się automatycznie.
+</Callout>
+
+## Kontroler
+
+Kolejnym krokiem będzie przygotowanie kontrolera dla utworzonego powyżej obiektu. W tym celu w pakiecie `student` utwórz klasę `StudentController`.
+
+Do tej klasy dodaj adnotację `@RestController` oraz dodatkowo `@RequestMapping` z parametrem określającym ścieżkę do naszego kontrolera, np. "students".
+
+W klasie utwórz metodę zwracającą listę studentów, analogicznie jak wcześniej w klasie `GreetingController`:
+
+```java
+@RestController
+@RequestMapping(path = "students")
+public class StudentController {
+    @GetMapping
+    public List<Student> getStudents() {
+        return List.of(new Student("Jan", "Kowalski", LocalDate.now(), "123456"));
+   }
+}
+```
+
+Uruchom kod i przejdź do http://localhost:8080/students - powinien wyświetlić się stworzony student.
+
+## Warstwa usług
+
+Aby odseparować kontroler od danych, skorzystamy z warstwy usług. W tym celu w pakiecie student utwórz klasę `StudentService` z adnotacją `@Service`. Do tej klasy przenieś metodę zwracającą listę studentów:
+
+```java
+@Service
+public class StudentService {
+    public List<Student> getStudents() {
+        return List.of(new Student("Jan", "Kowalski", LocalDate.now(), "123456"));
+    }
+}
+```
+
+W klasie `StudentController` dodaj atrybut przechowujący instancję tej klasy i skorzystaj z niej do pobrania listy studentów:
+
+```java
+private final StudentService studentService;
+public StudentController(StudentService studentService) {
+    this.studentService = studentService;
+}
+@GetMapping
+public List<Student> getStudents() {
+    return studentService.getStudents();
+}
+```
+
+<Callout type="info" emoji="ℹ️">
+Uwaga: od wersji Spring Framework 4.3 adnotacja `@Autowired` nie jest potrzebna, jeżeli wykorzystywany bean ma tylko jeden konstruktor.
+</Callout>
+
+Uruchom ponownie kod i przejdź do http://localhost:8080/students - efekt powinien być identyczny, jak poprzednio.
