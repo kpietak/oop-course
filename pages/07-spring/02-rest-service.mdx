@@ -10,10 +10,11 @@ W tym celu, w pliku `build.gradle` należy zamienić podstawową zależność `o
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 ```
 
-Ponowne uruchomienie aplikacji powinno wystartować ją z wykorzystaniem serwera Tomcat:
+Ponowne uruchomienie aplikacji (po przeładowaniu gradle) powinno wystartować ją z wykorzystaniem serwera Tomcat:
 
 ```
 Tomcat initialized with port(s): 8080 (http)
@@ -27,7 +28,7 @@ Started SchoolApplication in 1.405 seconds (JVM running for 2.198)
 
 ## Usługi REST
 
-Aby utworzyć pierwszą usługę REST, utwórz nową klasę `GreetingController` i dodaj do niego adnotację `@RestController`, a następnie utwórz w tejże klasie dowolną metodę, opatrzoną adnotacją `@GetMapping` i zwracającą wartość typu `String`, np.:
+Aby utworzyć pierwszą usługę REST, utwórz nową klasę `GreetingController` i dodaj do niej adnotację `@RestController`, a następnie utwórz dowolną metodę, opatrzoną adnotacją `@GetMapping` i zwracającą wartość typu `String`, np.:
 
 ```java
 @GetMapping
@@ -35,7 +36,7 @@ public String greeting() {
     return "Technologie obiektowe";
 }
 ```
-  
+
 Po ponownym uruchomieniu aplikacji i przejściu w przeglądarce do adresu http://localhost:8080/ powinien wyświetlić się napis „Technologie obiektowe”.
 
 Jeśli zwracany typ zamienimy np. na listę, to wynik zostanie w przeglądarce wyświetlony jako JSON, np.:

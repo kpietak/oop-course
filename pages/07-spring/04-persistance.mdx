@@ -1,3 +1,5 @@
+import {Callout} from 'nextra/components'
+
 # Persystencja danych
 
 ## Baza danych
@@ -20,7 +22,7 @@ Aby to zadziałało, konieczne jest dodanie odpowiedniego sterownika oraz ustawi
 runtimeOnly 'com.h2database:h2'
 ```
 
-W pliku `application.properties` należy ustawić adres:
+W pliku `src/main/resources/application.properties` należy ustawić adres:
 
 ```
 spring.datasource.url=jdbc:h2:./school
@@ -31,6 +33,10 @@ W tym momencie aplikacja powinna się już poprawnie uruchomić.
 ## Encja
 
 Skoro mamy już skonfigurowaną bazę danych, czas zapisać w niej jakiś obiekt. W tym celu wystarczy na naszym obiekcie Student ustawić adnotację `@Entity`, a na kolumnie klucza głównego adnotację `@Id` oraz `@GeneratedValue`. Konieczne będzie też dodanie konstruktora bez argumentów, wymaganego przez JPA.
+
+<Callout type="info">
+Pamiętaj by w razie wątpliwości importować adnotacje z pakietu `jakarta.persistence`, który jest domyślnym pakietem dla nowych wersji Hibernate i Spring Data.
+</Callout>
 
 Ponadto, aby w bazie automatycznie utworzona została odpowiednia struktura, trzeba w pliku `application.properties` ustawić parametr `ddl-auto`:
 ```

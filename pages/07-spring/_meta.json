@@ -4,5 +4,5 @@
   "03-model": "Model i udostępnienie danych",
   "04-persistance": "Persystencja danych",
   "05-logic": "Logika systemu",
-  "06-extra": "Zadanie dodatkowe"
+  "06-tests": "Testy w Spring Boot"
 }

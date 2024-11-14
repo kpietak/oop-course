@@ -1,3 +1,4 @@
+
 # Logika aplikacji
 
 ## Rozbudowa modelu danych
@@ -6,7 +7,38 @@
 
 ![Model](/07-spring/model.png)
 
-2. Wygeneruj przykładowe dane w klasie konfiguracji: utwórz dwa przedmioty, dodaj do nich po kilku studentów, a następnie utwórz oceny z każdego przedmiotu.
+2. Wygeneruj przykładowe dane w klasie konfiguracji: utwórz dwa przedmioty, dodaj do nich po kilku studentów, a następnie utwórz oceny z każdego przedmiotu. Możesz wykorzystać poniższy kod:
+    ```java
+    Student kowalski = new Student("Jan", "Kowalski", LocalDate.now(), "123456");
+    Student budynek = new Student("Piotr", "Budynek", LocalDate.now(), "6547891");
+    Student menczystaty = new Student("Henryk", "Menczystaty", LocalDate.now(), "848565");
+    
+    var to = new Course("Technologie obiektowe");
+    var po = new Course("Programowanie obiektowe");
+    
+    courseRepository.saveAll(List.of(to, po));
+    
+    to.assignStudent(kowalski);
+    to.assignStudent(budynek);
+    
+    po.assignStudent(menczystaty);
+    
+    Grade grade1 = new Grade(5, to);
+    kowalski.giveGrade(grade1);
+    
+    Grade grade2 = new Grade(4, po);
+    kowalski.giveGrade(grade2);
+    
+    Grade grade3 = new Grade(3, to);
+    budynek.giveGrade(grade3);
+    
+    Grade grade4 = new Grade(2, po);
+    menczystaty.giveGrade(grade4);
+    
+    gradeRepository.saveAll(List.of(grade1, grade2, grade3, grade4));
+    studentRepository.saveAll(List.of(kowalski, budynek, menczystaty));
+    courseRepository.saveAll(List.of(to, po));
+    ```
 
 3. Napisz kontrolery, które udostępnią informacje o studentach i przedmiotach:
     1. Dodaj metodę do pobierania wszystkich przedmiotów. Czy json zwrócony przez zapytanie zawiera również dane o studentach? Dlaczego? Jak to kontrolować?
@@ -20,10 +52,10 @@ W warstwie repozytorium dodaj odpowiednie zapytanie korzystając z tzw. [query m
 
 1. W dalszych krokach będziemy m. in. tworzyli zapytania innego typu niż GET, do przetestowania których nie wystarczy już sama przeglądarka. Można korzystać z zewnętrznych narzędzi (curl, Postman), ale w przypadku projektu Spring Boot bardzo łatwo podpiąć narzędzie do generowania interaktywnej dokumentacji API -  Swagger. Aby go skonfigurować wystarczy dodać do gradle'a paczkę:
     ```
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     ```
     Po ponownym uruchomieniu aplikacji Swagger będzie dostępny pod domyślnym adresem:
-http://localhost:8080/swagger-ui.html 
+    http://localhost:8080/swagger-ui.html 
 
 1. Dodaj do kontrolera dla studenta możliwość wystawiania oceny końcowej z danego przedmiotu. Jakiego typu zapytanie REST będzie tutaj potrzebne? W zadaniu konieczne będzie wykorzystanie adnotacji `@Transactional`. Dlaczego?
 Przetestuj rozwiązanie z wykorzystaniem Swaggera.
