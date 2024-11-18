@@ -4,7 +4,7 @@
 
 ## Model danych - pierwsza klasa
 
-Utwórz pakiet `pl.edu.agh.to.school.student`, a w tym pakiecie klasę `Student`. W tej klasie utwórz kilka atrybutów.:
+Utwórz pakiet `pl.edu.agh.to.school.student`, a w tym pakiecie klasę `Student`. W tej klasie utwórz kilka atrybutów:
 - identyfikator,
 - imię,
 - nazwisko,
@@ -25,7 +25,7 @@ Dodaj do klasy gettery i konstruktor.
 
 import { Callout } from 'nextra/components'
  
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
     Uwaga: konstruktor powinien ustawiać wszystkie atrybuty oprócz `id`. Gdy dodamy do naszego przykładu bazę danych, skonfigurujemy model tak by `id` generowało się automatycznie.
 </Callout>
 
@@ -48,7 +48,7 @@ public class StudentController {
 }
 ```
 
-Uruchom kod i przejdź do http://localhost:8080/students - powinien wyświetlić się stworzony student.
+Uruchom kod i przejdź do http://localhost:8080/students - powinien wyświetlić się stworzony obiekt studenta.
 
 ## Warstwa usług
 
@@ -76,7 +76,7 @@ public List<Student> getStudents() {
 }
 ```
 
-<Callout type="info" emoji="ℹ️">
+<Callout type="info">
 Uwaga: od wersji Spring Framework 4.3 adnotacja `@Autowired` nie jest potrzebna, jeżeli wykorzystywany bean ma tylko jeden konstruktor.
 </Callout>
 
