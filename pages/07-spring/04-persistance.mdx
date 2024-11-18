@@ -1,0 +1,101 @@
+import {Callout} from 'nextra/components'
+
+# Persystencja danych
+
+## Baza danych
+
+W celu nawiązania połączenia z bazą danych należy do zależności dodać JPA:
+
+```
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+```
+
+Samo dodanie tej zależności spowoduje, że aplikacja przestanie się uruchamiać, wyświetlając komunikat o błędzie:
+
+```
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+```
+
+Aby to zadziałało, konieczne jest dodanie odpowiedniego sterownika oraz ustawienie adresu bazy danych. Na początek najprościej będzie skorzystać z bazy H2, która nie wymaga instalowania. Do zależności należy dopisać:
+
+```
+runtimeOnly 'com.h2database:h2'
+```
+
+W pliku `src/main/resources/application.properties` należy ustawić adres:
+
+```
+spring.datasource.url=jdbc:h2:./school
+```
+
+W tym momencie aplikacja powinna się już poprawnie uruchomić.
+
+## Encja
+
+Skoro mamy już skonfigurowaną bazę danych, czas zapisać w niej jakiś obiekt. W tym celu wystarczy na naszym obiekcie Student ustawić adnotację `@Entity`, a na kolumnie klucza głównego adnotację `@Id` oraz `@GeneratedValue`. Konieczne będzie też dodanie konstruktora bez argumentów, wymaganego przez JPA.
+
+<Callout type="info">
+Pamiętaj by w razie wątpliwości importować adnotacje z pakietu `jakarta.persistence`, który jest domyślnym pakietem dla nowych wersji Hibernate i Spring Data.
+</Callout>
+
+Ponadto, aby w bazie automatycznie utworzona została odpowiednia struktura, trzeba w pliku `application.properties` ustawić parametr `ddl-auto`:
+```
+spring.jpa.hibernate.ddl-auto=update
+```
+
+Po uruchomieniu aplikacji w bazie danych utworzona zostanie tabela STUDENT z odpowiednimi kolumnami i kluczem głównym na kolumnie ID. Można to sprawdzić, łącząc się z bazą danych z poziomu IntelliJ IDEA Ultimate (zakładka „Database”, przy czym połączenie możliwe jest tylko, gdy aplikacja jest zatrzymana), albo aktywując konsolę H2 wpisując w pliku `application.properties` poniższy parametr:
+
+```
+spring.h2.console.enabled=true
+```
+
+Po restarcie aplikacji konsola będzie dostępna pod adresem http://localhost:8080/h2-console/. W celu zalogowania należy podać URL jdbc:h2:./school, a użytkownika i hasło pozostawić puste.
+
+## Repozytorium
+
+Komunikację warstwy usług z bazą danych zapewni repozytorium. Aby jest zrealizować, utwórz interfejs `StudentRepository` rozszerzający `JpaRepository` lub `CrudRepository`. Ten pierwszy jest bardziej rozbudowany, a jego zaletą jest to, że funkcje typu find zwracają obiekty implementujące interfejs `List`, a nie `Iterable`. Dodaj do klasy adnotację `@Repository`.
+
+Oprócz rozszerzenia interfejsu oraz wskazania typu obiektu i typu klucza głównego nie trzeba nic więcej dodawać do kodu repozytorium.
+
+```java
+@Repository
+public interface StudentRepository extends JpaRepository<Student, Integer> {
+
+}
+```
+Pozostaje dodanie wykorzystania tego interfejsu w usłudze StudentService:
+
+```java
+@Service
+public class StudentService {
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+    public List<Student> getStudents() {
+        return studentRepository.findAll();
+    }
+}
+```
+
+Tym razem po uruchomieniu aplikacji http://localhost:8080/students zwróci pustą listę, ponieważ w bazie danych nie mamy jeszcze żadnych rekordów.
+
+## Klasa konfiguracji - generowanie przykładowych danych
+
+Przed zbudowaniem interfejsu użytkownika do obsługi listy studentów, dodamy przykładowy rekord, wykorzystując klasę konfiguratora. Utwórz klasę o nazwie np. `StudentConfigurator` z adnotacją `@Configuration`. W tej klasie umieść metodę o nazwie np. `commandLineRunner`, która zapisze w bazie przykładowy rekord studenta, wykorzystując repozytorium. Żeby ta metoda została uruchomiona na etapie konfiguracji, musi posiadać adnotację `@Bean`. Rekord należy dodać tylko w przypadku, gdy nie ma jeszcze żadnych innych studentów.
+
+```java
+@Configuration
+public class StudentConfigurator {
+    @Bean
+    CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
+        return args -> {
+            if (studentRepository.count() == 0) {
+                Student kowalski = new Student("Jan", "Kowalski", LocalDate.now(), "123456");
+                studentRepository.save(kowalski);
+            }
+        };
+    }
+}
+```

@@ -35,6 +35,11 @@
     "type": "page",
     "display": "hidden"
   }, 
+  "07-spring": {
+    "title": "Wprowadzenie do Spring Boot",
+    "type": "page",
+    "display": "hidden"
+  }, 
 
   "menu": {
     "title": "Rozdziały",
@@ -63,6 +68,10 @@
       "06-ioc-guice": {
           "title": "6. Wstrzykiwanie zależności",
           "href": "/06-ioc-guice"
+        },
+      "07-sprint": {
+          "title": "7. Wprowadzenie do Spring Boot",
+          "href": "/07-spring"
         }
     }
   }

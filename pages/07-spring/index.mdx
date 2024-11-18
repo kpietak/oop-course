@@ -1,0 +1,30 @@
+# Wprowadzenie
+
+## Zakres zajęć:
+- podstawowe elementy Spring Boot,
+- wstrzykiwanie zależności,
+- dostęp do danych,
+- udostępnianie usług REST.
+
+## Przygotowanie
+W celu wygenerowania szablonu projektu można skorzystać ze strony [Spring Initializr](https://start.spring.io/) lub wykorzystać wbudowany generator IntelliJ IDEA. W obu przypadkach należy wybrać następujące parametry:
+
+- Gradle Project,
+- Java Language,
+- Spring Boot 3.x.x,
+- Group: **pl.edu.agh.to**,
+- Artifact: **school**.
+- Jar packaging,
+- Java 21 (lub nowsza)
+
+Na początek nie potrzebujemy żadnych zależności. Po wygenerowaniu projekt należy otworzyć w IDE (w przypadku generatora IntelliJ IDEA projekt zostanie otwarty automatycznie).
+
+## Uruchomienie
+
+Aby przetestować wygenerowany szablon aplikacji, należy przejść do klasy `pl.edu.agh.to.school.SchoolApplication` i uruchomić aplikację korzystając z polecenia „Run” na tej klasie. Poprawne uruchomienie powinno być potwierdzone na konsoli poniższymi liniami:
+
+```
+pl.edu.agh.to.school.SchoolApplication   : No active profile set, falling back to default profiles: default
+pl.edu.agh.to.school.SchoolApplication   : Started SchoolApplication in 0.771 seconds (JVM running for 1.564)
+Process finished with exit code 0
+```

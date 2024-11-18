@@ -1,0 +1,49 @@
+# Pierwsza usługa REST
+
+## Aplikacja webowa
+
+Pierwszym krokiem do rozbudowy szkieletu aplikacji będzie zamiana na aplikację webową.
+
+W tym celu, w pliku `build.gradle` należy zamienić podstawową zależność `org.springframework.boot:spring-boot-starter` na `org.springframework.boot:spring-boot-starter-web`:
+
+```
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+```
+
+Ponowne uruchomienie aplikacji (po przeładowaniu gradle) powinno wystartować ją z wykorzystaniem serwera Tomcat:
+
+```
+Tomcat initialized with port(s): 8080 (http)
+Starting service [Tomcat]
+Starting Servlet engine: [Apache Tomcat/9.0.53]
+Initializing Spring embedded WebApplicationContext
+Root WebApplicationContext: initialization completed in 725 ms
+Tomcat started on port(s): 8080 (http) with context path ''
+Started SchoolApplication in 1.405 seconds (JVM running for 2.198)
+```
+
+## Usługi REST
+
+Aby utworzyć pierwszą usługę REST, utwórz nową klasę `GreetingController` i dodaj do niej adnotację `@RestController`, a następnie utwórz dowolną metodę, opatrzoną adnotacją `@GetMapping` i zwracającą wartość typu `String`, np.:
+
+```java
+@GetMapping
+public String greeting() {
+    return "Technologie obiektowe";
+}
+```
+
+Po ponownym uruchomieniu aplikacji i przejściu w przeglądarce do adresu http://localhost:8080/ powinien wyświetlić się napis „Technologie obiektowe”.
+
+Jeśli zwracany typ zamienimy np. na listę, to wynik zostanie w przeglądarce wyświetlony jako JSON, np.:
+
+```java
+@GetMapping
+public List<String> greeting() {
+    return List.of("Technologie", "obiektowe");
+}
+```

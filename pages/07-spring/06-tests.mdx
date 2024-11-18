@@ -1,0 +1,11 @@
+# Testy w Spring Boot
+
+Aby sprawdzić, czy nowe metody działają prawidłowo, przygotuj zestaw testów jednostkowych dla warstwy logiki aplikacji. Na początek można skupić się na klasie `StudentService`, tworząc w tym celu klasę `StudentServiceTest`. 
+
+Wskazówki do pisania testów:
+
+- Jeśli test korzysta z komponentów Springa, należy dodać do całej klasy testowej adnotację `@SpringBootTest`. Pozwoli ona wstrzykiwać zależności tak jak w normalnym kodzie - można np. wstrzyknąć instancję `StudentRepository`.
+
+- W przypadku testów najczęściej nie chcemy korzystać z produkcyjnej bazy danych - żeby dodać tymczasową bazę użyj `@AutoConfigureTestDatabase`.
+
+- Każdy test powinien być niezależny od innych, co oznacza że po wykonaniu każdej z metod testowych powinniśmy cofać operacje wykonane na testowej bazie. W tym celu możemy ponownie skorzystać z adnotacji `@Transactional` (można jej użyć w kontekście całej klasy). Wypróbuj jej działanie i porównaj działanie testów z adnotacją i bez niej.
