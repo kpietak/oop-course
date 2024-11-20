@@ -1,5 +1,5 @@
 {
-  "intro": "Wprowadzenie",
-  "commands": "Tworzenie komend",
-  "stack": "Stos komend"
+  "index": "Wprowadzenie",
+  "02-commands": "Tworzenie komend",
+  "03-stack": "Stos komend"
 }
