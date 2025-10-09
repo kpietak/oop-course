@@ -1,4 +1,60 @@
+import {Callout} from 'nextra/components'
+
 # Cykl życia komponentu
 
-## TODO
+W Springu kontener IoC jest powoływany do życia w momencie uruchomienia aplikacji, a następnie sam wyszukuje i tworzy wszystkie komponenty. Pojedynczy komponent to tzw. bean i jest reprezentowany przez klasę oznaczoną jedną z kilku specjalnych adnotacji (np. `@Component`, `@Service`).
+
+## Tworzenie beanów
+
+1. W pakiecie `pl.edu.agh.to.school.student` utwórz klasę `StudentService` i oznacz ją adnotacją `@Service`.
+2. W konstruktorze klasy dodaj wypisywanie informacji, że serwis studentów został utworzony.
+3. Uruchom ponownie całą aplikację. Sprawdź, czy serwis tworzy się poprawnie.
+4. Do klasy `StudentService` dodaj dwie metody. Jedną z nich oznacz adnotacją `@PostConstruct`, a drugą `@PreDestroy`. Możesz nazwać metody dowolnie, np. `onServiceStarted/Destroyed()`. W każdej z metod wypisz informację, która jednoznacznie powie, że dana metoda została wywołana.
+5. Uruchom ponownie aplikację i przeanalizuj sytuację. Czy wszystkie oznaczone metody zostały wywołane? Kto je wywołał?
+
+ <Callout type="default">
+Jaki jest domyślny zakres (*scope*) działania beana utworzonego przez Springa? Ile obiektów danej klasy utworzy Spring przy uruchamianiu aplikacji?
+ </Callout>
+
+## Drzewo zależności
+
+1. Aby przetestować wstrzykiwanie zależności zdefiniuj w pakiecie `pl.edu.agh.to.school.grade` klasę `GradeService`. Dodaj do niej metody reagujące na utworzenie/zniszczenie beana, podobnie jak w przypadku `StudentService`.
+2. Wstrzyknij beana `GradeService` do `StudentService`. W tym celu dodaj atrybut do klasy `StudentService` i zmodyfikuj konstruktor tak, by przyjmował instancję `GradeService`.
+3. Uruchom aplikację. Sprawdź czy oba beany nadal są inicjowane i jaka jest kolejność ich inicjalizacji. 
+   <Callout type="info">
+   Zwróć uwagę, że przy wstrzykiwaniu nie były potrzebne żadne dodatkowe adnotacje. Jeśli podajemy argumenty przez konstruktor Spring sam domyśla się, co powinien zrobić. Istnieje też możliwość wstrzykiwania przy użyciu adnotacji `@Autowired` bezpośrednio przy atrybutach, ale nie jest to zalecane poza testami.
+    </Callout>
+4. Dodaj kolejne beany tak, aby zrealizować poniższe drzewo zależności. W każdym przypadku zdefiniuj metody `@PostConstruct`/`@PreDestroy`. Zastanów się w szczególności, w jaki sposób powinny działać beany oparte o interfejsy.
+
+Jeśli wszystko poszło ok to na koniec tej części zadania program powinien wypisywać takie informacje:
+
+```
+Console notification service is up
+Grade book is up
+Grade service is up
+Student service is up
+Student service is down
+Grade service is down
+Grade book is down
+Console notification service is down
+```
+
+## Model aplikacji
+
+Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiadają one jeszcze logiki. W tej części zadania dodamy model oraz podstawową logikę, która pozwoli na wykorzystanie wszystkich komponentów.
+
+1. Pobierz załączone klasy modelowe: `Student`, `Grade` oraz `Course` i umieść je w odpowiednich pakietach.
+
+2. Zmodyfikuj odpowiednie serwisy zgodnie z opisem:
+
+   1. `ConsoleNotificationService` powinien jedynie wypisywać w metodzie `notify()` informację o tym że student o danym imieniu i nazwisku otrzymał ocenę o konkretnej wartości z przedmiotu o danej nazwie.
+
+   2. `GradeBook` powinno posiadać mapę numer indeksu : lista ocen:
+
+      ```java
+	    private final Map<String, List<Grade>> studentGrades = new HashMap<>();
+	   ```
+oraz metodę `assignGrade(Student student, Course course, double gradeValue)`,  która utworzy obiekt `Grade`, doda go mapy i zwróci. Podpowiedź: skorzystaj z metody `computeIfAbsent()`.
+
+
 
