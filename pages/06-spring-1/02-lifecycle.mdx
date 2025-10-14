@@ -39,22 +39,6 @@ Grade book is down
 Console notification service is down
 ```
 
-## Model aplikacji
-
-Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiadają one jeszcze logiki. W tej części zadania dodamy model oraz podstawową logikę, która pozwoli na wykorzystanie wszystkich komponentów.
-
-1. Pobierz załączone klasy modelowe: `Student`, `Grade` oraz `Course` i umieść je w odpowiednich pakietach.
-
-2. Zmodyfikuj odpowiednie serwisy zgodnie z opisem:
-
-   1. `ConsoleNotificationService` powinien jedynie wypisywać w metodzie `notify()` informację o tym że student o danym imieniu i nazwisku otrzymał ocenę o konkretnej wartości z przedmiotu o danej nazwie.
-
-   2. `GradeBook` powinno posiadać mapę numer indeksu : lista ocen:
-
-      ```java
-	    private final Map<String, List<Grade>> studentGrades = new HashMap<>();
-	   ```
-oraz metodę `assignGrade(Student student, Course course, double gradeValue)`,  która utworzy obiekt `Grade`, doda go mapy i zwróci. Podpowiedź: skorzystaj z metody `computeIfAbsent()`.
 
 
 

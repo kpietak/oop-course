@@ -1,0 +1,32 @@
+
+# Fabryki beanów
+
+W tej części laboratorium zdefiniujemy główną część programu. Dodamy do naszego projektu model i zobaczymy jak można go zainicjować, używając do tego tzw. fabryki beanów.
+
+## Model aplikacji
+
+Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiadają one jeszcze logiki. W tej części zadania dodamy model oraz podstawową logikę, która pozwoli na wykorzystanie wszystkich komponentów.
+
+1. Pobierz załączone klasy modelowe: `Student`, `Grade` oraz `Course` i umieść je w odpowiednich pakietach.
+
+2. Zmodyfikuj odpowiednie serwisy zgodnie z opisem:
+
+   1. `ConsoleNotificationService` powinien jedynie wypisywać w metodzie `notify()` informację o tym że student o danym imieniu i nazwisku otrzymał ocenę o konkretnej wartości z przedmiotu o danej nazwie.
+
+   2. `GradeBook` powinno posiadać mapę numer indeksu : lista ocen:
+
+      ```java
+	    private final Map<String, List<Grade>> studentGrades = new HashMap<>();
+	   ```
+oraz metodę `assignGrade(Student student, Course course, double gradeValue)`, która utworzy obiekt `Grade`, doda go mapy i zwróci. 
+<Callout type="default">  
+Podpowiedź: skorzystaj z metody `computeIfAbsent()`.  
+</Callout>
+
+   3. `GradeService` powinien posiadać metodę `void assignGrade(Student student, Course course, double gradeValue)`, która użyje `GradeBook` do zapisania oceny, a następnie wyśle notyfikację przez `NotificationService`.
+   4. `StudentService` również powinien posiadać metodę ` void assignGrade(Student student, Course course, double gradeValue)`, w której jedynie oddeleguje polecenie do `GradeService`.
+5. Dodaj klasę `SchoolInitializer`, oznacz ją w odpowiedni sposób by Spring ją stworzył. 
+   
+
+## 
+
