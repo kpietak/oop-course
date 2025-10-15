@@ -1,6 +1,8 @@
+import {Callout} from 'nextra/components'
+
 ### I. Wprowadzenie do RX
 
-Wszystkie ćwiczenia wykonamy na specjalnie przygotowanej aplikacji do wyszukiwania i gromadzenia zdjęć. Nasz program **PhotoCrawler** pozwala na zdefiniowanie szeregu słów kluczowych (*topics*), które następnie są przetwarzane na zapytania do serwisu **DuckDuckGo**. Wszystkie interesujące nas zdjęcia są następnie pobierane i zapisywane na dysk. 
+Wszystkie ćwiczenia wykonamy na specjalnie przygotowanej aplikacji do wyszukiwania i gromadzenia zdjęć. Nasz program **PhotoCrawler** pozwala na zdefiniowanie szeregu słów kluczowych (*topics*), które następnie są przetwarzane na zapytania do serwisu **Google Grafika**. Wszystkie interesujące nas zdjęcia są następnie pobierane i zapisywane na dysk. 
 
 Cztery kluczowe komponenty (klasy) aplikacji zostały przedstawione na diagramie:
 
@@ -21,10 +23,11 @@ Na kolejnych stronach znalazły się zadania, które należy wykonać w podanej 
 
 1. Zaimportuj projekt `lab-rx` do IntelliJ (*File -> Open...*). Wszystkie zależności projektu powinny zostać automatycznie pobrane. 
 
-2. Część zadań będzie wymagała użycia wbudowanego scrapera do pobierania obrazów z DuckDuckGo. Korzystamy z Scraper API, które wymaga podania indywidualnego wygenerowanego klucza. Wejdź na [stronę Scraper API](https://dashboard.scraperapi.com/login), załóż tam konto (zajmuje chwilę i NIE trzeba podawać żadnych numerów kart itp). 
-   Następnie znajdź w sekcji *Dashboard* pole ***API Key*** i przeklej jego zawartość do `CrawlerApp` (stała `SCRAPER_API_KEY`).
+2. Część zadań będzie wymagała użycia wbudowanego scrapera do pobierania obrazów z Google Grafika. Korzystamy z **Google Custom Search JSON API**, które wymaga podania indywidualnego wygenerowanego klucza API. Wejdź na [stronę z instrukcjami na temat Custom Search API](https://developers.google.com/custom-search/v1/overview?hl=pl) i zaloguj się kontem Google. Następnie w sekcji *Klucz interfejsu API* znajdź przycisk *Zamów klucz* i postępuj zgodnie z instrukcjami. Na koniec wklej otrzymany klucz w klasie `CrawlerApp` (stała `GOOGLE_CUSTOM_SEARCH_API_KEY`).
 
-    **Uwaga:** w darmowej wersji API umożliwia wykonanie 1000 zapytań / miesiąc. Na potrzeby tej i kolejnej laborki w zupełności powinno wystarczyć, ale warto o tym pamiętać.
+	<Callout type="warning">
+    **Uwaga:** w darmowej wersji API umożliwia wykonanie 100 zapytań / dzień. Na potrzeby tej i kolejnej laborki w zupełności powinno wystarczyć, ale warto o tym pamiętać. Możesz sprawdzić aktualną wartość wykorzystanego limitu w [panelu API konsoli Cloud Platform](https://console.cloud.google.com/apis/dashboard?hl=pl). Z API będziemy korzystać w sekcjach II i III tego laboratorium).
+	</Callout>
 
 3. Zapoznaj się z klasami: `PhotoCrawler`, `PhotoDownloader` oraz `PhotoSerializer` i `PhotoProcessor`. Zwróć uwagę przede wszystkim na publiczne metody udostępniane przez te klasy.
 
