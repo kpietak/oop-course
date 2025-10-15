@@ -30,7 +30,7 @@ Aby odwzorować tę relację w bazie wykorzystujemy specjalnie stworzoną do teg
 
 Metoda `enrollStudent()` powinna zwracać `true`, jeśli udało się zapisać studenta na dany kurs oraz `false` w przeciwnym wypadku (np. jeśli student był już zapisany na ten kurs).
 
-**Zadanie:** Zaimplementuj metodę `enrollStudent()`. Powinna ona tworzyć wpis w bazie danych, w tabeli `student_course`. Wykorzystaj do tego metodę `QueryExecutor.createAndObtainId()`. 
+**Zadanie:** Zaimplementuj metodę `enrollStudent()`. Powinna ona tworzyć wpis w bazie danych, w tabeli `student_course`. Wykorzystaj do tego metodę `QueryExecutor.create()`. 
 
 Po wykonaniu tego zadania powinien działać test `studentCanBeEnrolledInCourseOnce()` z klasy `ActiveRecordTest`. Sprawdź to uruchamiając ten test.
 
