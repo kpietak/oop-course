@@ -84,9 +84,9 @@ Ponadto chcemy, żeby kurs posiadał też zbiór ocen. Dlatego w klasie `Course`
 @OneToMany(mappedBy = "course")
 private Set<Grade> gradeSet = new HashSet<>();
 ```
-W tym wypadku mówimy, że jest to relacja `@OneToMany` - jeden kurs może posiadać wiele ocen. Wartość `mappedBy` wskazuje które pole w klasie `Grade` jest odpowiedzialne za drugą część mapowania.
+W tym wypadku mówimy, że jest to relacja `@OneToMany` - jeden kurs może posiadać wiele ocen. Wartość `mappedBy` wskazuje, które pole w klasie `Grade` jest odpowiedzialne za drugą część mapowania.
 
-**Uwaga** Zauważ, że w klasie `Grade` podajemy mapowanie `@ManyToOne` a w klasie `Course` to samo mapowanie określamy jako `@OneToMany`.
+**Uwaga** Zauważ, że w klasie `Grade` podajemy mapowanie `@ManyToOne`, a w klasie `Course` to samo mapowanie określamy jako `@OneToMany`.
 
 
 ##### N-M (wiele do wielu)
