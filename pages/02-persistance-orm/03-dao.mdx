@@ -100,7 +100,7 @@ Ponownie trzeba zauważyć, że w JPQL nie odwołujemy sie do nazwy kolumny tylk
 #### Tworzenie zapytań JPQL w Javie
 
 ```java
-Session session = getCurrentSession() //1
+Session session = currentSession() //1
 Car car = session.createQuery("Select c FROM Car c WHERE c.year = :year", Car.class) //2
                  .setParameter("year",  2016) //3
                  .getSingleResult(); //4
