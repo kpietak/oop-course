@@ -1,0 +1,20 @@
+import {Callout} from 'nextra/components'
+
+
+# Testy w Spring Boot
+
+Ostatnim, ale nie mniej ważnym elementem naszego systemu będą testy. Nie będziemy tu tworzyć pełnego kompletu testów, a jedynie przykładowe metody, by zaobserwować, w jaki sposób Spring współpracuje z bibliotekami do testowania.
+
+1. Po wygenerowaniu szkieletu projektu w module testowym powinna być widoczna klasa `SchoolApplicationTests`. Upewnij się, że posiada ona adnotację `@SpringBootTest`. Pozwoli ona uruchomić testy wraz z całym Springiem i wstrzykiwać do testu potrzebne zależności.
+1. Napisz test, który sprawdzi mechanizm oceniania:
+   1. Stworzy przykładowego studenta.
+   1. Stworzy przykładowy kurs.
+   1. Przypisze ocenę studentowi korzystając z `StudentService`.
+   1. Zweryfikuje, czy `GradeBook` zawiera prawidłowe oceny (możesz dodać metodę zwracającą mapę `<String, List<Grade>` w `GradeBook`).
+1. Pamiętaj, by nie tworzyć ręcznie wymaganych serwisów! Zamiast tego może je wstrzyknąć do klasy testowej. W tym przypadku nie ma potrzeby robić tego przez konstruktor. Można dodać przy każdym tego typu atrybucie adnotację `@Autowired`
+1. Podczas uruchamiania testy powinny aktywować profil `test`. Możesz to zapewnić dodając nad klasą testową adnotację `@ActiveProfiles("test")`. Dzięki temu nie załadują się beany z innych profili. Dlaczego to ważne w tym przypadku?
+1. Po uruchomieniu testu może się okazać, że w `GradeBook` są też inne oceny, niż ta testowana. Pamiętaj, że domyślnie Spring stworzy wszystkie beany, zdefiniowane w systemie. Zastanów się, który z beanów w tym przypadku nie powinien być aktywowany i zastąp go mockiem (atrapą). 
+    <Callout>
+    Nie ma potrzeby definiowania mocków ręcznie. Spring współpracuje z biblioteką Mockito, więc wystarczy zadeklarować atrybut danego typu i oznaczyć go adnotacją `@MockitoBean`.
+    </Callout>
+1. Na tym etapie wszystko powinno już działać!
