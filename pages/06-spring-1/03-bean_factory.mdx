@@ -1,5 +1,6 @@
 import {Callout} from 'nextra/components'
 import {Details} from '../../components/details'
+import { Cards, Card } from 'nextra/components'
 
 # Fabryki beanów
 
@@ -10,24 +11,29 @@ W tej części laboratorium zdefiniujemy główną część programu. Dodamy do 
 Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiadają one jeszcze logiki. W tej części zadania dodamy model oraz podstawową logikę, która pozwoli na wykorzystanie wszystkich komponentów.
 
 1. Pobierz załączone klasy modelowe: `Student`, `Grade` oraz `Course` i umieść je w odpowiednich pakietach.
+    <Cards>
+    <Card title="&#11015; Student.java" href="/06-spring1/Student.java"/>
+    <Card title="&#11015; Course.java" href="/06-spring1/Course.java"/>
+    <Card title="&#11015; Grade.java" href="/06-spring1/Grade.java"/>
+    </Cards>
 
 1. Zmodyfikuj odpowiednie serwisy zgodnie z opisem:
 
-   1. `ConsoleNotificationService` powinien jedynie wypisywać w metodzie `notify()` informację o tym że student o danym imieniu i nazwisku otrzymał ocenę o konkretnej wartości z przedmiotu o danej nazwie.
+   1. `NotificationService` powinien posiadać metodę `void notify(Student, Grade)`, a `ConsoleNotificationService` powinien ją implementować w taki sposób, by wypisywać informację o tym, że student o danym imieniu i nazwisku otrzymał ocenę o konkretnej wartości z przedmiotu o danej nazwie.
 
    1. `GradeBook` powinno posiadać mapę `numer indeksu : lista ocen`:
 
       ```java
 	    private final Map<String, List<Grade>> studentGrades = new HashMap<>();
-	   ```
-oraz metodę `assignGrade(Student student, Course course, double gradeValue)`, która utworzy obiekt `Grade`, doda go mapy i zwróci. 
-    <Callout type="default">  
-    Podpowiedź: skorzystaj z metody `computeIfAbsent()`.  
-    </Callout>
+      ```
+      oraz metodę `assignGrade(Student student, Course course, double gradeValue)`, która utworzy obiekt `Grade`, doda go mapy i zwróci. 
+      <Callout type="default">  
+      Podpowiedź: skorzystaj z metody `computeIfAbsent()`.  
+      </Callout>
 
    1. `GradeService` powinien posiadać metodę `void assignGrade(Student student, Course course, double gradeValue)`, która użyje `GradeBook` do zapisania oceny, a następnie wyśle notyfikację przez `NotificationService`.
    1. `StudentService` również powinien posiadać metodę ` void assignGrade(Student student, Course course, double gradeValue)`, w której jedynie oddeleguje polecenie do `GradeService`.
-1. Dodaj klasę `SchoolInitializer`, oznacz ją w odpowiedni sposób, by Spring ją stworzył. Następnie stwórz testowy obiekt studenta i kursu i przetestuj działanie napisanego wcześniej modelu, przypisując ocenę do studenta. Pamiętaj, by wstrzyknąć odpowiedni serwis i upewnij się, że Twój kod wywoła się po zainicjowaniu klasy.
+1. Dodaj klasę `SchoolInitializer`, oznacz ją w odpowiedni sposób, by Spring stworzył jej instancję. Następnie stwórz testowy obiekt studenta i kursu i przetestuj działanie napisanego wcześniej modelu, przypisując ocenę do studenta. Pamiętaj, by wstrzyknąć odpowiedni serwis i upewnij się, że Twój kod wywoła się po zainicjowaniu klasy.
    
 
 ## Tworzenie fabryki beanów

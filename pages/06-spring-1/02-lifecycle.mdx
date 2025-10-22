@@ -12,14 +12,14 @@ W Springu kontener IoC jest powoływany do życia w momencie uruchomienia aplika
 1. Do klasy `StudentService` dodaj dwie metody. Jedną z nich oznacz adnotacją `@PostConstruct`, a drugą `@PreDestroy`. Możesz nazwać metody dowolnie, np. `onServiceStarted/Destroyed()`. W każdej z metod wypisz informację, która jednoznacznie powie, że dana metoda została wywołana.
 1. Uruchom ponownie aplikację i przeanalizuj sytuację. Czy wszystkie oznaczone metody zostały wywołane? Kto je wywołał?
     <Callout type="default">
-    Jaki jest domyślny zakres (*scope*) działania beana utworzonego przez Springa? Ile obiektów danej klasy utworzy Spring przy uruchamianiu aplikacji?
+    Zastanów się, jaki jest domyślny zakres (*scope*) działania beana utworzonego przez Springa. Ile obiektów danej klasy utworzy Spring przy uruchamianiu aplikacji?
     </Callout>
 
 ## Drzewo zależności
 
 1. Aby przetestować wstrzykiwanie zależności zdefiniuj w pakiecie `pl.edu.agh.to.school.grade` klasę `GradeService`. Dodaj do niej metody reagujące na utworzenie/zniszczenie beana, podobnie jak w przypadku `StudentService`.
 1. Wstrzyknij beana `GradeService` do `StudentService`. W tym celu dodaj atrybut do klasy `StudentService` i zmodyfikuj konstruktor tak, by przyjmował instancję `GradeService`.
-1. Uruchom aplikację. Sprawdź czy oba beany nadal są inicjowane i jaka jest kolejność ich inicjalizacji. 
+1. Uruchom aplikację. Sprawdź, czy oba beany nadal są inicjowane i jaka jest kolejność ich inicjalizacji. 
    <Callout type="info">
    Zwróć uwagę, że przy wstrzykiwaniu nie były potrzebne żadne dodatkowe adnotacje. Jeśli podajemy argumenty przez konstruktor Spring sam domyśla się, co powinien zrobić. Istnieje też możliwość wstrzykiwania przy użyciu adnotacji `@Autowired` bezpośrednio przy atrybutach, ale nie jest to zalecane poza testami.
     </Callout>

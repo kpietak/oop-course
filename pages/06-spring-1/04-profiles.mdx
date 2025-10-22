@@ -1,6 +1,7 @@
 import {Callout} from 'nextra/components'
 import {Details} from '../../components/details'
 
+
 # Profile Spring
 
 Do tej pory korzystaliśmy z jednej, ustalonej konfiguracji beanów. W praktyce będziemy często uzależniali działanie fragmentów systemu od konkretnego zastosowania, tzw. **profilu aplikacji**. Przykładowo aplikacja w wersji deweloperskiej będzie uruchamiać bazę danych lokalnie, w wersji do testów podmieni bazę na testy w pamięci, a wersji produkcyjnej skomunikuje się z zewnętrzną bazą.
@@ -93,6 +94,12 @@ W tej części zadania dodamy nowy rodzaj serwisu do notyfikacji, który docelow
     </Details>
 1. Przetestuj działanie programu. Po uruchomieniu powinny być widoczne wszystkie dotychczasowe informacje, a przy zamykaniu powinno się pojawiać podsumowanie wysyłanych maili. Zwróć uwagę, że po dodaniu serwisu mailowego aplikacja nie zamyka się już automatycznie. Jest to naturalne zjawisko, ponieważ przekształciliśmy ją w usługę, która nasłuchuje na określonym porcie i obsługuje wysyłanie wiadomości.
     <Callout type="warning">
-    Jeśli nie posiadasz pluginu do Springa w IntelliJ, zamykanie aplikacji może nie być poprawnie obsługiwane i traktowane jako "brutalne przerwanie". Można wymusić, by aplikacja zamykała się zaraz po zainicjowaniu dodając w `SchoolApplication` instrukcję `close()` na obiekcie zwracanym przez metodę `run()`.
+    Jeśli nie posiadasz pluginu do Springa w IntelliJ, zamykanie aplikacji może nie być poprawnie obsługiwane i traktowane jako "brutalne przerwanie". Można wymusić, by aplikacja zamykała się zaraz po zainicjowaniu, dodając w `SchoolApplication` instrukcję `close()` na obiekcie zwracanym przez metodę `run()`.
     </Callout>
 1. Upewnij się, że wszystkie beany mają odpowiednie definicje profili. Zastanów się, które powinny być obecne zawsze, a które jedynie w profilu `dev` i dodaj odpowiednie adnotacje.
+
+### Wersja produkcyjna aplikacji
+
+W przygotowanym przez nas programie zdefiniowaliśmy dwa warianty obsługi notyfikacji: prosty, wykorzystujący tylko konsolę na potrzeby testów oraz nieco bardziej złożony, reagujący na usługę sieciową, ale nadal niewysyłający prawdziwych maili. Zastanów się, jak należałoby zmienić aplikację, by dodać trzeci profil (np. `prod`), w którym zamiast mechanizmu opartego o `GreenMail` faktycznie wysyłalibyśmy prawdziwe maile. Które z beanów należałoby podmienić, a które nie? Jakie zasady obiektowe są tutaj istotne?
+
+Nie musisz implementować swojego rozwiązania, choć oczywiście warto spróbować!
