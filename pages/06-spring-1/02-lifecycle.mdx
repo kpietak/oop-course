@@ -7,26 +7,26 @@ W Springu kontener IoC jest powoływany do życia w momencie uruchomienia aplika
 ## Tworzenie beanów
 
 1. W pakiecie `pl.edu.agh.to.school.student` utwórz klasę `StudentService` i oznacz ją adnotacją `@Service`.
-2. W konstruktorze klasy dodaj wypisywanie informacji, że serwis studentów został utworzony.
-3. Uruchom ponownie całą aplikację. Sprawdź, czy serwis tworzy się poprawnie.
-4. Do klasy `StudentService` dodaj dwie metody. Jedną z nich oznacz adnotacją `@PostConstruct`, a drugą `@PreDestroy`. Możesz nazwać metody dowolnie, np. `onServiceStarted/Destroyed()`. W każdej z metod wypisz informację, która jednoznacznie powie, że dana metoda została wywołana.
-5. Uruchom ponownie aplikację i przeanalizuj sytuację. Czy wszystkie oznaczone metody zostały wywołane? Kto je wywołał?
-
- <Callout type="default">
-Jaki jest domyślny zakres (*scope*) działania beana utworzonego przez Springa? Ile obiektów danej klasy utworzy Spring przy uruchamianiu aplikacji?
- </Callout>
+1. W konstruktorze klasy dodaj wypisywanie informacji, że serwis studentów został utworzony.
+1. Uruchom ponownie całą aplikację. Sprawdź, czy serwis tworzy się poprawnie.
+1. Do klasy `StudentService` dodaj dwie metody. Jedną z nich oznacz adnotacją `@PostConstruct`, a drugą `@PreDestroy`. Możesz nazwać metody dowolnie, np. `onServiceStarted/Destroyed()`. W każdej z metod wypisz informację, która jednoznacznie powie, że dana metoda została wywołana.
+1. Uruchom ponownie aplikację i przeanalizuj sytuację. Czy wszystkie oznaczone metody zostały wywołane? Kto je wywołał?
+    <Callout type="default">
+    Jaki jest domyślny zakres (*scope*) działania beana utworzonego przez Springa? Ile obiektów danej klasy utworzy Spring przy uruchamianiu aplikacji?
+    </Callout>
 
 ## Drzewo zależności
 
 1. Aby przetestować wstrzykiwanie zależności zdefiniuj w pakiecie `pl.edu.agh.to.school.grade` klasę `GradeService`. Dodaj do niej metody reagujące na utworzenie/zniszczenie beana, podobnie jak w przypadku `StudentService`.
-2. Wstrzyknij beana `GradeService` do `StudentService`. W tym celu dodaj atrybut do klasy `StudentService` i zmodyfikuj konstruktor tak, by przyjmował instancję `GradeService`.
-3. Uruchom aplikację. Sprawdź czy oba beany nadal są inicjowane i jaka jest kolejność ich inicjalizacji. 
+1. Wstrzyknij beana `GradeService` do `StudentService`. W tym celu dodaj atrybut do klasy `StudentService` i zmodyfikuj konstruktor tak, by przyjmował instancję `GradeService`.
+1. Uruchom aplikację. Sprawdź czy oba beany nadal są inicjowane i jaka jest kolejność ich inicjalizacji. 
    <Callout type="info">
    Zwróć uwagę, że przy wstrzykiwaniu nie były potrzebne żadne dodatkowe adnotacje. Jeśli podajemy argumenty przez konstruktor Spring sam domyśla się, co powinien zrobić. Istnieje też możliwość wstrzykiwania przy użyciu adnotacji `@Autowired` bezpośrednio przy atrybutach, ale nie jest to zalecane poza testami.
     </Callout>
-4. Dodaj kolejne beany tak, aby zrealizować poniższe drzewo zależności. W każdym przypadku zdefiniuj metody `@PostConstruct`/`@PreDestroy`. Zastanów się w szczególności, w jaki sposób powinny działać beany oparte o interfejsy.
+1. Dodaj kolejne beany tak, aby zrealizować poniższe drzewo zależności. W każdym przypadku zdefiniuj metody `@PostConstruct`/`@PreDestroy`. Zastanów się w szczególności, w jaki sposób powinny działać beany oparte o interfejsy.
+   ![Konfiguracja z pluginem](/06-spring1/dependency-tree.png)
 
-Jeśli wszystko poszło ok to na koniec tej części zadania program powinien wypisywać takie informacje:
+Jeśli wszystko poszło ok, to na koniec tej części zadania program powinien wypisywać takie informacje:
 
 ```
 Console notification service is up

@@ -5,14 +5,14 @@ import {Details} from '../../components/details'
 
 Do tej pory korzystaliśmy z jednej, ustalonej konfiguracji beanów. W praktyce będziemy często uzależniali działanie fragmentów systemu od konkretnego zastosowania, tzw. **profilu aplikacji**. Przykładowo aplikacja w wersji deweloperskiej będzie uruchamiać bazę danych lokalnie, w wersji do testów podmieni bazę na testy w pamięci, a wersji produkcyjnej skomunikuje się z zewnętrzną bazą.
 
-Używając mechanizmu profili Spring możemy w łatwy sposób zmieniać zachowanie wybranych fragmentów systemu, podmieniając określone właściwości lub całe klasy. Często będziemy wykorzystywać tutaj poliforfizm i zasadę odwrócenia zależności, podobnie jak na poprzednich zajęciach.
+Używając mechanizmu profili Spring, możemy w łatwy sposób zmieniać zachowanie wybranych fragmentów systemu, podmieniając określone właściwości lub całe klasy. Często będziemy wykorzystywać tutaj polimorfizm i zasadę odwrócenia zależności, podobnie jak na poprzednich zajęciach.
 
 ## Wstrzykiwanie właściwości systemu
 
 1. Znajdź plik `application.properties` w zasobach projektu (`src/main/resources`). Znajdują się tu wszystkie właściwości systemu w formacie `klucz=wartość`. Można odwoływać się do nich potem w projekcie lub zmieniać wartości, używane przez biblioteki (również samego Springa).
-2. Dodaj nową właściwość, reprezentującą wersję aplikacji, np. `school.app.version` i nadaj jej dowolną wartość.
-3. Właściwości mogą być wstrzykiwane podobnie jak inne beany. Trzeba jedynie oznaczyć je adnotacją `@Value`. W klasie `SchoolInitializer` wstrzyknij przygotowaną wcześniej właściwość. Format wstrzykiwanego parametru powinien być następujący: `@Value("{nazwa.właściwości}) String parameter`.
-4. Zapewnij, by aplikacja wypisywała swoją wersję po zainicjowaniu `SchoolInitializer` i przetestuj, czy działa.  
+1. Dodaj nową właściwość, reprezentującą wersję aplikacji, np. `school.app.version` i nadaj jej dowolną wartość.
+1. Właściwości mogą być wstrzykiwane podobnie jak inne beany. Trzeba jedynie oznaczyć je adnotacją `@Value`. W klasie `SchoolInitializer` wstrzyknij przygotowaną wcześniej właściwość. Format wstrzykiwanego parametru powinien być następujący: `@Value("{nazwa.właściwości}) String parameter`.
+1. Zapewnij, by aplikacja wypisywała swoją wersję po zainicjowaniu `SchoolInitializer` i przetestuj, czy działa.  
 
 ## Podmiana właściwości systemu w zależności od profilu
 
@@ -22,14 +22,14 @@ Używając mechanizmu profili Spring możemy w łatwy sposób zmieniać zachowan
     Nazwy profili mogą być dowolne, typowo będzie to: `dev`, `prod` oraz `test`.  
     </Callout>
 1. W stworzonym pliku ponownie zdefiniuj właściwość określającą wersję aplikacji, ale nadaj jej inną wartość (klucz powinien być taki sam!). Np. zamiast wersji `1.0` możesz zdefiniować `1.0-dev`.
-2. Zmodyfikuj konfigurację aplikacji tak, by uruchamiała się w profilu `dev`.   
+1. Zmodyfikuj konfigurację aplikacji tak, by uruchamiała się w profilu `dev`.   
     <Details>
         1. Jeśli posiadasz plugin do IntelliJ obsługujący Springa (np. masz zainstalowane IntelliJ Ultimate) to wystarczy dodać nazwę profilu w konfiguracji uruchomieniowej (`Edit configurations...`):  
         ![Konfiguracja z pluginem](/06-spring1/profiles1.png)
         2. W przeciwnym przypadku uruchom program z argumentem VM: `-Dspring.profiles.active=dev`.  
         ![Konfiguracja profili z flagą](/06-spring1/profiles2.png)  
     </Details>
-3. Zweryfikuj, czy na konsoli wypisuje się prawidłowa wartość wersji aplikacji.
+1. Zweryfikuj, czy na konsoli wypisuje się prawidłowa wartość wersji aplikacji.
 
 ## Podmiana klas w zależności od profilu
 
@@ -87,12 +87,12 @@ W tej części zadania dodamy nowy rodzaj serwisu do notyfikacji, który docelow
     spring.mail.protocol=smtp
     spring.mail.test-connection=false
     ```
-1. Uruchom program. Nadal nie działa? Na tym etapie **warto rozrysować sobie drzewo zależności wszystkich utworzonych komponentów Springa**. Możesz to zrobić na kartce lub w dowolnym programie graficznym. Zastanów się w jakiej kolejności tworzą się beany związane z serwisem mailowym i gdzie w tym przypadku Spring nie ma nad tym pełnej kontroli. W rozwiązaniu problemu możesz skorzystać ze wskazówki poniżej.   
+1. Uruchom program. Nadal nie działa? Na tym etapie **warto rozrysować sobie drzewo zależności wszystkich utworzonych komponentów Springa**. Możesz to zrobić na kartce lub w dowolnym programie graficznym. Zastanów się, w jakiej kolejności tworzą się beany związane z serwisem mailowym i gdzie w tym przypadku Spring nie ma nad tym pełnej kontroli. W rozwiązaniu problemu możesz skorzystać ze wskazówki poniżej.   
     <Details>
     Jeśli jakiś komponent Springa nie jest powiązany z innym na poziomie zależności (przez konstruktor lub w inny sposób), a na poziomie luźnego związku (np. usługa sieciowa, która powinna wcześniej się uruchomić) to można skorzystać z adnotacji `@DependsOn("nazwaBeana")`. Dodajemy ją na poziomie klasy, która powinna utworzyć się już po tym, gdy podany w adnotacji bean powstanie.
     </Details>
 1. Przetestuj działanie programu. Po uruchomieniu powinny być widoczne wszystkie dotychczasowe informacje, a przy zamykaniu powinno się pojawiać podsumowanie wysyłanych maili. Zwróć uwagę, że po dodaniu serwisu mailowego aplikacja nie zamyka się już automatycznie. Jest to naturalne zjawisko, ponieważ przekształciliśmy ją w usługę, która nasłuchuje na określonym porcie i obsługuje wysyłanie wiadomości.
     <Callout type="warning">
-    Jeśli nie posiadasz pluginu do Springa w IntelliJ zamykanie aplikacji może nie być poprawnie obsługiwane i traktowane jako "brutalne przerwanie". Można wymusić, by aplikacja zamykała się zaraz po zainicjowaniu dodając w `SchoolApplication` instrukcję `close()` na obiekcie zwracanym przez metodę `run()`.
+    Jeśli nie posiadasz pluginu do Springa w IntelliJ, zamykanie aplikacji może nie być poprawnie obsługiwane i traktowane jako "brutalne przerwanie". Można wymusić, by aplikacja zamykała się zaraz po zainicjowaniu dodając w `SchoolApplication` instrukcję `close()` na obiekcie zwracanym przez metodę `run()`.
     </Callout>
 1. Upewnij się, że wszystkie beany mają odpowiednie definicje profili. Zastanów się, które powinny być obecne zawsze, a które jedynie w profilu `dev` i dodaj odpowiednie adnotacje.
