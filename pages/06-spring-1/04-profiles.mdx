@@ -12,7 +12,7 @@ Używając mechanizmu profili Spring, możemy w łatwy sposób zmieniać zachowa
 
 1. Znajdź plik `application.properties` w zasobach projektu (`src/main/resources`). Znajdują się tu wszystkie właściwości systemu w formacie `klucz=wartość`. Można odwoływać się do nich potem w projekcie lub zmieniać wartości, używane przez biblioteki (również samego Springa).
 1. Dodaj nową właściwość, reprezentującą wersję aplikacji, np. `school.app.version` i nadaj jej dowolną wartość.
-1. Właściwości mogą być wstrzykiwane podobnie jak inne beany. Trzeba jedynie oznaczyć je adnotacją `@Value`. W klasie `SchoolInitializer` wstrzyknij przygotowaną wcześniej właściwość. Format wstrzykiwanego parametru powinien być następujący: `@Value("{nazwa.właściwości}) String parameter`.
+1. Właściwości mogą być wstrzykiwane podobnie jak inne beany. Trzeba jedynie oznaczyć je adnotacją `@Value`. W klasie `SchoolInitializer` wstrzyknij przygotowaną wcześniej właściwość. Format wstrzykiwanego parametru powinien być następujący: `@Value("${nazwa.właściwości}") String parameter`.
 1. Zapewnij, by aplikacja wypisywała swoją wersję po zainicjowaniu `SchoolInitializer` i przetestuj, czy działa.  
 
 ## Podmiana właściwości systemu w zależności od profilu
@@ -69,7 +69,7 @@ W tej części zadania dodamy nowy rodzaj serwisu do notyfikacji, który docelow
     <Callout>
     Zwróć uwagę, że w ten sposób możemy łatwo dostarczać beany, które pochodzą z zewnętrznych bibliotek i nie są kompatybilne ze Springiem. `GreenMail` nie jest serwisem/komponentem Springa, a mimo to możemy go skonfigurować i stworzyć tak, by dało się go wstrzykiwać.  
     </Callout>
-1. Dodaj jeszcze jedną klasę w tym samym pakiecie: `GreenMailHandler`. Wstrzyknij do niej `GreenMail`. Dodaj metodę, która powinna wywołać się podczas zamykania systemu i wypisywać zgromadzone maile, wysłane podczas sesji:
+1. Dodaj jeszcze jedną klasę w tym samym pakiecie: `GreenMailHandler`. Wstrzyknij do niej obiekty typu `GreenMail` i wystartuj usługę: `greenMail.start()`. Dodaj metodę, która powinna wywołać się podczas zamykania systemu i wypisywać zgromadzone maile, wysłane podczas sesji:
     ```java
     @PreDestroy
     private void showAllGatheredEmails() throws MessagingException {

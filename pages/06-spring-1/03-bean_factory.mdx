@@ -26,7 +26,11 @@ Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiada
       ```java
 	    private final Map<String, List<Grade>> studentGrades = new HashMap<>();
       ```
-      oraz metodę `assignGrade(Student student, Course course, double gradeValue)`, która utworzy obiekt `Grade`, doda go mapy i zwróci. 
+      oraz metodę 
+      ```java
+      public Grade assignGrade(Student student, Course course, double gradeValue) {}
+      ````
+      która utworzy obiekt `Grade`, doda go do mapy i zwróci. 
       <Callout type="default">  
       Podpowiedź: skorzystaj z metody `computeIfAbsent()`.  
       </Callout>
@@ -53,7 +57,7 @@ Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiada
     }
     ```  
     Zwróć uwagę na adnotację `@Bean`. Zastanów się, jakie będzie jej przeznaczenie. Czy przypomina Ci to podobny mechanizm poznany na poprzednich zajęciach?
-1. W `SchoolInitializer` wstrzyknij obiekt `Course` i dodaj metodę:  
+1. W `SchoolInitializer` wstrzyknij obiekt `Course` i dodaj metodę (możesz pozostawić istniejącą metodę adnotowaną `@PostConstruct` utworzoną w poprzednim ćwiczeniu):  
     ```java
     @PostConstruct
     public void initComputerNetworksCourse() {

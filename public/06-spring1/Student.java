@@ -59,4 +59,11 @@ public final class Student {
     public int hashCode() {
         return Objects.hash(indexNumber);
     }
+
+    @Override
+    public String toString() {
+        return "Student[" +
+                "fullName=" + getFullName() + ", " +
+                "indexNumber=" + getIndexNumber() + ']';
+    }
 }
