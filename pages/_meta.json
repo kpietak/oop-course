@@ -25,18 +25,18 @@
     "type": "page",
     "display": "hidden"
   }, 
-  "05-ui-2": {
-    "title": "Zaawansowane wzorce interfejsu graficznego",
-    "type": "page",
-    "display": "hidden"
-  }, 
-  "06-ioc-guice": {
+  "05-ioc-guice": {
     "title": "Wstrzykiwanie zależności",
     "type": "page",
     "display": "hidden"
   }, 
-  "07-spring": {
+  "06-spring-1": {
     "title": "Wprowadzenie do Spring Boot",
+    "type": "page",
+    "display": "hidden"
+  }, 
+  "07-spring-2": {
+    "title": "Architektura serwisu webowego Spring Boot",
     "type": "page",
     "display": "hidden"
   }, 
@@ -61,16 +61,16 @@
         "title": "4. Wzorce interfejsu graficznego",
         "href": "/04-ui"
       },
-	  "05-ui-2": {
-        "title": "5. Zaawansowane wzorce interfejsu graficznego",
-        "href": "/05-ui-2"
-      },
-      "06-ioc-guice": {
-          "title": "6. Wstrzykiwanie zależności",
-          "href": "/06-ioc-guice"
+      "05-ioc-guice": {
+          "title": "5. Wstrzykiwanie zależności",
+          "href": "/05-ioc-guice"
         },
-      "07-sprint": {
-          "title": "7. Wprowadzenie do Spring Boot",
+      "06-spring-1": {
+          "title": "6. Wprowadzenie do Spring Boot",
+          "href": "/06-spring"
+        },
+	  "06-spring-2": {
+          "title": "7. Architektura serwisu webowego Spring Boot",
           "href": "/07-spring"
         }
     }

@@ -1,0 +1,7 @@
+{
+  "index": "Wprowadzenie",
+  "02-lifecycle": "Cykl życia komponentu",
+  "03-bean_factory": "Fabryki Spring",
+  "04-profiles": "Profile aplikacji",
+  "05-tests": "Testy w Spring Boot"
+}

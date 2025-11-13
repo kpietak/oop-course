@@ -1,0 +1,105 @@
+import {Callout} from 'nextra/components'
+import {Details} from '../../components/details'
+
+
+# Profile Spring
+
+Do tej pory korzystaliśmy z jednej, ustalonej konfiguracji beanów. W praktyce będziemy często uzależniali działanie fragmentów systemu od konkretnego zastosowania, tzw. **profilu aplikacji**. Przykładowo aplikacja w wersji deweloperskiej będzie uruchamiać bazę danych lokalnie, w wersji do testów podmieni bazę na testy w pamięci, a wersji produkcyjnej skomunikuje się z zewnętrzną bazą.
+
+Używając mechanizmu profili Spring, możemy w łatwy sposób zmieniać zachowanie wybranych fragmentów systemu, podmieniając określone właściwości lub całe klasy. Często będziemy wykorzystywać tutaj polimorfizm i zasadę odwrócenia zależności, podobnie jak na poprzednich zajęciach.
+
+## Wstrzykiwanie właściwości systemu
+
+1. Znajdź plik `application.properties` w zasobach projektu (`src/main/resources`). Znajdują się tu wszystkie właściwości systemu w formacie `klucz=wartość`. Można odwoływać się do nich potem w projekcie lub zmieniać wartości, używane przez biblioteki (również samego Springa).
+1. Dodaj nową właściwość, reprezentującą wersję aplikacji, np. `school.app.version` i nadaj jej dowolną wartość.
+1. Właściwości mogą być wstrzykiwane podobnie jak inne beany. Trzeba jedynie oznaczyć je adnotacją `@Value`. W klasie `SchoolInitializer` wstrzyknij przygotowaną wcześniej właściwość. Format wstrzykiwanego parametru powinien być następujący: `@Value("${nazwa.właściwości}") String parameter`.
+1. Zapewnij, by aplikacja wypisywała swoją wersję po zainicjowaniu `SchoolInitializer` i przetestuj, czy działa.  
+
+## Podmiana właściwości systemu w zależności od profilu
+
+1. Dodaj nowy plik `application-dev.properties` w zasobach systemu. Będzie on reprezentował właściwości, które mają być dostępne jedynie wówczas, gdy aplikacja działa w profilu `dev`. 
+    
+    <Callout type="info">
+    Nazwy profili mogą być dowolne, typowo będzie to: `dev`, `prod` oraz `test`.  
+    </Callout>
+1. W stworzonym pliku ponownie zdefiniuj właściwość określającą wersję aplikacji, ale nadaj jej inną wartość (klucz powinien być taki sam!). Np. zamiast wersji `1.0` możesz zdefiniować `1.0-dev`.
+1. Zmodyfikuj konfigurację aplikacji tak, by uruchamiała się w profilu `dev`.   
+    <Details>
+        1. Jeśli posiadasz plugin do IntelliJ obsługujący Springa (np. masz zainstalowane IntelliJ Ultimate) to wystarczy dodać nazwę profilu w konfiguracji uruchomieniowej (`Edit configurations...`):  
+        ![Konfiguracja z pluginem](/06-spring1/profiles1.png)
+        2. W przeciwnym przypadku uruchom program z argumentem VM: `-Dspring.profiles.active=dev`.  
+        ![Konfiguracja profili z flagą](/06-spring1/profiles2.png)  
+    </Details>
+1. Zweryfikuj, czy na konsoli wypisuje się prawidłowa wartość wersji aplikacji.
+
+## Podmiana klas w zależności od profilu
+
+W tej części zadania dodamy nowy rodzaj serwisu do notyfikacji, który docelowo będzie wysyłał maile do studentów, którzy otrzymali oceny. Użyjemy tutaj **Spring Mail** oraz biblioteki **GreenMail**, która symuluje wysyłanie maili (nie będzie konieczności wysyłania prawdziwych wiadomości!).
+
+### Dodawanie nowej implementacji interfejsu beana
+
+1. Stwórz nowy serwis w pakiecie `pl.edu.agh.to.school.notification`: `EmailNotificationService`. Powinien on implementować `NotificationService`.
+1. Spróbuj uruchomić aplikację. Przeanalizuj błąd i zastanów się, dlaczego nie działa.
+1. Napraw problem, definiując beany tak, by `EmailNotificationService` uruchamiał się tylko, gdy aktywny jest profil `dev`, a `ConsoleNotificationService` gdy aktywny jest profil `test`. Wykorzystaj adnotację `@Profile("name")` (można ją umieszczać nad klasami).
+   <Callout>
+   Czy po wykonaniu tych kroków będzie możliwe uruchomienie aplikacji bez określenia profilu? Dlaczego?
+   </Callout>
+
+### Przekształcanie klasy z istniejącej biblioteki na beana
+
+1. w konfiguracji `build.gradle` dodaj biblioteki, wymagane do obsługi serwisu mailowego i odśwież projekt Gradle:  
+    ```  
+    implementation 'org.springframework.boot:spring-boot-starter-mail'  
+    implementation 'com.icegreen:greenmail:2.1.6'
+    ```
+1. W `EmailNotificationService` wstrzyknij przez konstruktor instancję `JavaMailSender` - jest to uniwersalny interfejs do wysyłania wiadomości zarządzany przez Springa. 
+1. Zaimplementuj metodę `notify` tak, by wykorzystywała przygotowane narzędzie. Możesz skorzystać z poniższego kodu:  
+    ```java
+    SimpleMailMessage msg = new SimpleMailMessage();
+    msg.setFrom("nauczyciel@agh.edu.pl");
+    msg.setTo(student.getEmail());
+    msg.setSubject("New grade: " + grade.course().getName());
+    msg.setText("You received a new grade: " + grade.value());
+    mailSender.send(msg);
+    ```
+1. Dodaj nowe bean factory `GreenMailConfig`, które stworzy beana `GreenMail`. `GreenMail` w konstruktorze wymaga podania obiektu konfiguracji serwera, który można stworzyć w następujący sposób:  
+    ```java  
+    ServerSetup smtp = new ServerSetup(1025, "localhost", ServerSetup.PROTOCOL_SMTP);
+    ```
+    <Callout>
+    Zwróć uwagę, że w ten sposób możemy łatwo dostarczać beany, które pochodzą z zewnętrznych bibliotek i nie są kompatybilne ze Springiem. `GreenMail` nie jest serwisem/komponentem Springa, a mimo to możemy go skonfigurować i stworzyć tak, by dało się go wstrzykiwać.  
+    </Callout>
+1. Dodaj jeszcze jedną klasę w tym samym pakiecie: `GreenMailHandler`. Wstrzyknij do niej obiekty typu `GreenMail` i wystartuj usługę: `greenMail.start()`. Dodaj metodę, która powinna wywołać się podczas zamykania systemu i wypisywać zgromadzone maile, wysłane podczas sesji:
+    ```java
+    @PreDestroy
+    private void showAllGatheredEmails() throws MessagingException {
+        for (MimeMessage message : greenMail.getReceivedMessages()) {
+            String formattedMessage = "From: " + Arrays.toString(message.getFrom()) +
+                    " | Subject: " + message.getSubject() +
+                    " | Body: " + GreenMailUtil.getBody(message);
+            System.out.println(formattedMessage);
+        }
+        greenMail.stop();
+    }
+1. Na koniec skonfiguruj usługę, do której Spring Mail będzie się odwoływał przez `JavaMailSender`. W tym celu dodaj dodatkowe właściwości do `application.properties`:
+    ```
+    spring.mail.host=localhost
+    spring.mail.port=1025   
+    spring.mail.protocol=smtp
+    spring.mail.test-connection=false
+    ```
+1. Uruchom program. Nadal nie działa? Na tym etapie **warto rozrysować sobie drzewo zależności wszystkich utworzonych komponentów Springa**. Możesz to zrobić na kartce lub w dowolnym programie graficznym. Zastanów się, w jakiej kolejności tworzą się beany związane z serwisem mailowym i gdzie w tym przypadku Spring nie ma nad tym pełnej kontroli. W rozwiązaniu problemu możesz skorzystać ze wskazówki poniżej.   
+    <Details>
+    Jeśli jakiś komponent Springa nie jest powiązany z innym na poziomie zależności (przez konstruktor lub w inny sposób), a na poziomie luźnego związku (np. usługa sieciowa, która powinna wcześniej się uruchomić) to można skorzystać z adnotacji `@DependsOn("nazwaBeana")`. Dodajemy ją na poziomie klasy, która powinna utworzyć się już po tym, gdy podany w adnotacji bean powstanie.
+    </Details>
+1. Przetestuj działanie programu. Po uruchomieniu powinny być widoczne wszystkie dotychczasowe informacje, a przy zamykaniu powinno się pojawiać podsumowanie wysyłanych maili. Zwróć uwagę, że po dodaniu serwisu mailowego aplikacja nie zamyka się już automatycznie. Jest to naturalne zjawisko, ponieważ przekształciliśmy ją w usługę, która nasłuchuje na określonym porcie i obsługuje wysyłanie wiadomości.
+    <Callout type="warning">
+    Jeśli nie posiadasz pluginu do Springa w IntelliJ, zamykanie aplikacji może nie być poprawnie obsługiwane i traktowane jako "brutalne przerwanie". Można wymusić, by aplikacja zamykała się zaraz po zainicjowaniu, dodając w `SchoolApplication` instrukcję `close()` na obiekcie zwracanym przez metodę `run()`.
+    </Callout>
+1. Upewnij się, że wszystkie beany mają odpowiednie definicje profili. Zastanów się, które powinny być obecne zawsze, a które jedynie w profilu `dev` i dodaj odpowiednie adnotacje.
+
+### Wersja produkcyjna aplikacji
+
+W przygotowanym przez nas programie zdefiniowaliśmy dwa warianty obsługi notyfikacji: prosty, wykorzystujący tylko konsolę na potrzeby testów oraz nieco bardziej złożony, reagujący na usługę sieciową, ale nadal niewysyłający prawdziwych maili. Zastanów się, jak należałoby zmienić aplikację, by dodać trzeci profil (np. `prod`), w którym zamiast mechanizmu opartego o `GreenMail` faktycznie wysyłalibyśmy prawdziwe maile. Które z beanów należałoby podmienić, a które nie? Jakie zasady obiektowe są tutaj istotne?
+
+Nie musisz implementować swojego rozwiązania, choć oczywiście warto spróbować!

@@ -1,0 +1,80 @@
+import {Callout} from 'nextra/components'
+import {Details} from '../../components/details'
+import { Cards, Card } from 'nextra/components'
+
+# Fabryki beanów
+
+W tej części laboratorium zdefiniujemy główną część programu. Dodamy do naszego projektu model i zobaczymy jak można go zainicjować, używając do tego tzw. fabryki beanów.
+
+## Model aplikacji
+
+Na razie zdefiniowaliśmy podstawowe serwisy w naszej aplikacji, ale nie posiadają one jeszcze logiki. W tej części zadania dodamy model oraz podstawową logikę, która pozwoli na wykorzystanie wszystkich komponentów.
+
+1. Pobierz załączone klasy modelowe: `Student`, `Grade` oraz `Course` i umieść je w odpowiednich pakietach.
+    <Cards>
+    <Card title="&#11015; Student.java" href="/06-spring1/Student.java"/>
+    <Card title="&#11015; Course.java" href="/06-spring1/Course.java"/>
+    <Card title="&#11015; Grade.java" href="/06-spring1/Grade.java"/>
+    </Cards>
+
+1. Zmodyfikuj odpowiednie serwisy zgodnie z opisem:
+
+   1. `NotificationService` powinien posiadać metodę `void notify(Student, Grade)`, a `ConsoleNotificationService` powinien ją implementować w taki sposób, by wypisywać informację o tym, że student o danym imieniu i nazwisku otrzymał ocenę o konkretnej wartości z przedmiotu o danej nazwie.
+
+   1. `GradeBook` powinno posiadać mapę `numer indeksu : lista ocen`:
+
+      ```java
+	    private final Map<String, List<Grade>> studentGrades = new HashMap<>();
+      ```
+      oraz metodę 
+      ```java
+      public Grade assignGrade(Student student, Course course, double gradeValue) {}
+      ````
+      która utworzy obiekt `Grade`, doda go do mapy i zwróci. 
+      <Callout type="default">  
+      Podpowiedź: skorzystaj z metody `computeIfAbsent()`.  
+      </Callout>
+
+   1. `GradeService` powinien posiadać metodę `void assignGrade(Student student, Course course, double gradeValue)`, która użyje `GradeBook` do zapisania oceny, a następnie wyśle notyfikację przez `NotificationService`.
+   1. `StudentService` również powinien posiadać metodę ` void assignGrade(Student student, Course course, double gradeValue)`, w której jedynie oddeleguje polecenie do `GradeService`.
+1. Dodaj klasę `SchoolInitializer`, oznacz ją w odpowiedni sposób, by Spring stworzył jej instancję. Następnie stwórz testowy obiekt studenta i kursu i przetestuj działanie napisanego wcześniej modelu, przypisując ocenę do studenta. Pamiętaj, by wstrzyknąć odpowiedni serwis i upewnij się, że Twój kod wywoła się po zainicjowaniu klasy.
+   
+
+## Tworzenie fabryki beanów
+
+1. W pakiecie `pl.edu.agh.to.school.course` stwórz dodatkową klasę `CourseFactory` i oznacz ją adnotacją `@Configuration`. 
+    <Callout type="info">  
+    Adnotacja `@Configuration` działa podobnie jak `@Service`. Spring w tym przypadku również powoła do życia odpowiedniego beana. Inna nazwa beana ma głównie funkcję informacyjną i sugeruje, że w tym przypadku bean będzie służył jako fabryka innych beanów. Podobnie wygląda to w przypadku innych adnotacji oznaczających beany, np. `@Component`, `@Repository`.  
+    </Callout>
+1. W klasie dodaj następujący kod:  
+    ```java
+    @Bean
+    public Course computerNetworksCourse() {
+        var student = new Student("Piotr", "Budynek", LocalDate.of(1990, 11, 7), "22334455", "budynek@student.agh.edu.pl");
+        var course = new Course("Sieci komputerowe");
+        course.enrollStudent(student);
+        return course;
+    }
+    ```  
+    Zwróć uwagę na adnotację `@Bean`. Zastanów się, jakie będzie jej przeznaczenie. Czy przypomina Ci to podobny mechanizm poznany na poprzednich zajęciach?
+1. W `SchoolInitializer` wstrzyknij obiekt `Course` i dodaj metodę (możesz pozostawić istniejącą metodę adnotowaną `@PostConstruct` utworzoną w poprzednim ćwiczeniu):  
+    ```java
+    @PostConstruct
+    public void initComputerNetworksCourse() {
+        computerNetworksCourse.getStudents()
+                .forEach(student -> studentService.assignGrade(student, computerNetworksCourse, 4.5));
+    }
+    ```
+1. Przetestuj działanie systemu. W tym momencie w logach powinny być widoczne informacje o inicjowaniu i zamykaniu serwisów oraz powiadomienia z wszystkich wystawionych ocen.
+1. W analogiczny sposób dodaj do fabryki tworzenie innego kursu, np. `objectOrentedProgrammingCourse()` oraz kod inicjujący w `SchoolInitializer`.   
+    <Callout>
+    Jeśli chcesz, możesz dla czytelności stworzyć kilka metod oznaczonych `@PostConstruct`, Spring wywoła każdą z nich.
+    </Callout>
+1. Działa? Jeśli nie to zastanów się, w jaki sposób Spring wyszukuje komponenty i co się dzieje, gdy mamy kilka beanów reprezentujących tę samą klasę (tutaj: `Course`).
+    <Details>
+    Spring domyślnie wyszukuje beany po typie, ale jeśli pojawi się kolizja, zaczyna wyszukiwać po nazwie samego beana. Domyślnie nazwę beana określa nazwa jego klasy (co niewiele zmienia), ale jeśli bean jest tworzony przez fabrykę to nazwa metody tworzącej beana staje się nazwą beana. Wówczas żeby wstrzyknąć odpowiedniego beana musimy zadbać, by wstrzykiwany parametr również miał taką samą nazwę. Jeśli chcemy tego uniknąć, możemy posłużyć się adnotacją `@Qualifier`, która działa podobnie jak np. nazwane zależności z Guice.
+    </Details>
+1. Wszystkie beany danego typu możemy również potraktować jako kolekcję, którą Spring potrafi wstrzyknąć w całości. Dodaj do `SchoolInitializer` jeszcze jeden atrybut i parametr konstruktora: `List<Course>`. Następnie dodaj jeszcze jedną metodę, która doda ocenę wszystkim studentom ze wszystkich kursów z listy i upewnij się, że program działa.
+    <Callout type="default">  
+    Zwróć uwagę, że w tym przypadku nie będzie żadnej kolizji przy wstrzykiwaniu, bo wstrzykujemy wszystkie beany bez rozróżniania ich!
+    </Callout>

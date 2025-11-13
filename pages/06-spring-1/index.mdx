@@ -1,0 +1,48 @@
+import {Callout} from 'nextra/components'
+
+# Wprowadzenie
+
+## Zakres zajęć
+- podstawowe elementy Spring Boot,
+- wstrzykiwanie zależności,
+- profile aplikacji,
+- testy w Spring Boot.
+
+## Materiały
+- [Oficjalna dokumentacja Spring Boot](https://docs.spring.io/spring-boot/index.html) - naprawdę dobrze napisana, może służyć również za tutorial w niektórych przypadkach.
+- [Podręczniki Baeldung](https://www.baeldung.com/spring-tutorial) - popularne tutoriale, pokrywające podstawowe aspekty w dedykowanych artykułach z przykładami. Często napotkamy je przy szukaniu informacji w Internecie i jest to najczęściej najlepsze miejsce do odwiedzenia.
+- [Plugin do Springa dla IntelliJ](https://plugins.jetbrains.com/plugin/20221-spring) - instalowany domyślnie w wersji Ultimate, w praktyce warto po prostu pobrać IntelliJ Ultimate (darmowe dla studentów). Nie jest to jednak konieczne do przerobienia zadań na tym laboratorium.
+
+## Przygotowanie  
+
+**Na tych zajęciach wyjątkowo nie będziemy korzystać z gotowego projektu. Zamiast tego wygenerujemy pustą aplikację Spring i będziemy wzbogacali ją o kolejne elementy, starając się zrozumieć ich działanie. Z tak przygotowanego projektu będziemy korzystać również na kolejnych zajęciach!**
+
+W celu wygenerowania szablonu projektu można skorzystać ze strony [Spring Initializr](https://start.spring.io/) lub wykorzystać wbudowany generator IntelliJ IDEA (*Generators -> Spring Boot*). W obu przypadkach należy wybrać następujące parametry:
+
+- Gradle - Groovy,
+- Java Language,
+- Spring Boot 3.x.x,
+- Group: **pl.edu.agh.to**,
+- Artifact: **school**.
+- Jar packaging,
+- Java 25 (lub nowsza)
+
+Na początek nie potrzebujemy żadnych zależności. Po wygenerowaniu projekt należy otworzyć w IDE (w przypadku generatora IntelliJ IDEA projekt zostanie otwarty automatycznie).
+
+<Callout type="warning">
+Automatyczna inicjalizacja projektu na ten moment nie ustawia najnowszej wersji Gradle, co uniemożliwia poprawne uruchomienie projektu z JDK 25. Aby zmienić wersję Gradle po zaimportowaniu projektu, znajdź i otwórz w drzewie projektu plik gradle/wrapper/gradle-wrapper.properties. Zmień wartość klucza `distributionUrl` tak by wskazywała na `gradle-9.1.0-bin.zip` i odśwież projekt Gradle.
+ </Callout>
+
+
+
+## Uruchomienie
+
+Aby przetestować wygenerowany szablon aplikacji, należy przejść do klasy `pl.edu.agh.to.school.SchoolApplication` i uruchomić aplikację korzystając z polecenia „Run” na tej klasie. Poprawne uruchomienie powinno być potwierdzone na konsoli poniższymi liniami:
+
+```
+pl.edu.agh.to.school.SchoolApplication   : No active profile set, falling back to default profiles: default
+pl.edu.agh.to.school.SchoolApplication   : Started SchoolApplication in 0.771 seconds (JVM running for 1.564)
+Process finished with exit code 0
+```
+
+Przyjrzyj się klasie `SchoolApplication`. Jakie elementy sprawiają, że program zostaje uruchomiony jako aplikacja Spring? Upewnij się, że rozumiesz wszystkie instrukcje i adnotacje i potrafisz wyjaśnić, co dokładnie dzieje się po uruchomieniu programu.
