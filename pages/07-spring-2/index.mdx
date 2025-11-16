@@ -1,27 +1,24 @@
+import { Cards, Card } from 'nextra/components'
+
 # Wprowadzenie
 
 ## Zakres zajęć:
-- podstawowe elementy Spring Boot,
-- wstrzykiwanie zależności,
-- dostęp do danych,
-- udostępnianie usług REST.
+- zastosowanie Spring Boot do budowy architektury serwisu webowego,
+- udostępnianie usług REST,
+- dostęp do danych za pomocą Spring Data i JPA.
 
 ## Przygotowanie
-W celu wygenerowania szablonu projektu można skorzystać ze strony [Spring Initializr](https://start.spring.io/) lub wykorzystać wbudowany generator IntelliJ IDEA. W obu przypadkach należy wybrać następujące parametry:
+Na zajęciach stworzymy kolejny projekt Spring Boot. Tym razem jednak będzie on reprezentował typową aplikację serwerową, która będzie potrafiła reagować na operacje REST i obsługiwać bazę danych. Pokażemy typowe warstwy takiej aplikacji i wykorzystamy zalety Spring Boot by maksymalnie uprościć tworzenie serwisu.
 
-- Gradle Project,
-- Java Language,
-- Spring Boot 3.x.x,
-- Group: **pl.edu.agh.to**,
-- Artifact: **school**.
-- Jar packaging,
-- Java 21 (lub nowsza)
-
-Na początek nie potrzebujemy żadnych zależności. Po wygenerowaniu projekt należy otworzyć w IDE (w przypadku generatora IntelliJ IDEA projekt zostanie otwarty automatycznie).
+<Cards>
+    <Card title="&#11015; Pobierz kod źródłowy" href="/07-spring2/lab-spring-web.zip"/>
+</Cards>
 
 ## Uruchomienie
 
-Aby przetestować wygenerowany szablon aplikacji, należy przejść do klasy `pl.edu.agh.to.school.SchoolApplication` i uruchomić aplikację korzystając z polecenia „Run” na tej klasie. Poprawne uruchomienie powinno być potwierdzone na konsoli poniższymi liniami:
+Aby przetestować wygenerowany szablon aplikacji, należy przejść do klasy `pl.edu.agh.to.school.SchoolApplication` i uruchomić 
+aplikację korzystając z polecenia *Run* na tej klasie. Poprawne uruchomienie powinno być potwierdzone na konsoli poniższymi 
+liniami:
 
 ```
 pl.edu.agh.to.school.SchoolApplication   : No active profile set, falling back to default profiles: default
