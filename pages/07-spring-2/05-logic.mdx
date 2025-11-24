@@ -1,50 +1,58 @@
+import {Details} from '../../components/details'
 
 # Logika aplikacji
 
 ## Rozbudowa modelu danych
 
-1. Rozszerz model o nowe klasy umożliwiające zapisywanie studentów na dany kurs / przedmiot oraz wystawianie ocen. Dodaj klasy `Course` oraz `Grade`, zgodnie z poniższym diagramem. 
+1. Rozszerz model, uzupełniając brakujące adnotacje JPA w klasach `Course` i `Grade`, a następnie zdefiniuj dla nich interfejsy repozytoriów. Model powinien odwzorowywać poniższy diagram: 
 
 ![Model](/07-spring2/model.png)
 
 2. Wygeneruj przykładowe dane w klasie konfiguracji: utwórz dwa przedmioty, dodaj do nich po kilku studentów, a następnie utwórz oceny z każdego przedmiotu. Możesz wykorzystać poniższy kod:
     ```java
-    Student kowalski = new Student("Jan", "Kowalski", LocalDate.now(), "123456");
-    Student budynek = new Student("Piotr", "Budynek", LocalDate.now(), "6547891");
-    Student menczystaty = new Student("Henryk", "Menczystaty", LocalDate.now(), "848565");
-    
-    var to = new Course("Technologie obiektowe");
-    var po = new Course("Programowanie obiektowe");
-    
-    courseRepository.saveAll(List.of(to, po));
-    
-    to.assignStudent(kowalski);
-    to.assignStudent(budynek);
-    
-    po.assignStudent(menczystaty);
-    
-    Grade grade1 = new Grade(5, to);
-    kowalski.giveGrade(grade1);
-    
-    Grade grade2 = new Grade(4, po);
-    kowalski.giveGrade(grade2);
-    
-    Grade grade3 = new Grade(3, to);
-    budynek.giveGrade(grade3);
-    
-    Grade grade4 = new Grade(2, po);
-    menczystaty.giveGrade(grade4);
-    
-    gradeRepository.saveAll(List.of(grade1, grade2, grade3, grade4));
-    studentRepository.saveAll(List.of(kowalski, budynek, menczystaty));
-    courseRepository.saveAll(List.of(to, po));
-    ```
+	Student kowalski = new Student("Jan", "Kowalski", LocalDate.now(), "123456");
+	Student budynek = new Student("Piotr", "Budynek", LocalDate.now(), "6547891");
+	Student menczystaty = new Student("Henryk", "Menczystaty", LocalDate.now(), "848565");
 
-3. Napisz kontrolery, które udostępnią informacje o studentach i przedmiotach:
-    1. Dodaj metodę do pobierania wszystkich przedmiotów. Czy json zwrócony przez zapytanie zawiera również dane o studentach? Dlaczego? Jak to kontrolować?
-    1. Dodaj metodę do pobierania studentów zapisanych na przedmiot o podanym id. W tym celu stwórz nowy mapping w kontrolerze kursu i wykorzystaj mechanizm `@PathVariable`.
+	var to = new Course("Technologie obiektowe");
+	var po = new Course("Programowanie obiektowe");
+
+	to.assignStudent(kowalski);
+	to.assignStudent(budynek);
+
+	po.assignStudent(menczystaty);
+
+	Grade grade1 = new Grade(5);
+	kowalski.giveGrade(grade1);
+
+	Grade grade2 = new Grade(4);
+	kowalski.giveGrade(grade2);
+
+	Grade grade3 = new Grade(3);
+	budynek.giveGrade(grade3);
+
+	Grade grade4 = new Grade(2);
+	menczystaty.giveGrade(grade4);
+
+	gradeRepository.saveAll(List.of(grade1, grade2, grade3, grade4));
+	studentRepository.saveAll(List.of(kowalski, budynek, menczystaty));
+	courseRepository.saveAll(List.of(to, po));
+    ```
+	
+3. Zweryfikuj, czy po uruchomieniu aplikacji tworzą się odpowiednie struktury i dane w bazie.
 
 ## Praca z API i rozbudowa warstwy usług
+
+1. Napisz kontrolery, które udostępnią informacje o studentach i przedmiotach:
+    1. Dodaj metodę do pobierania wszystkich przedmiotów. Czy json zwrócony przez zapytanie zawiera również dane o studentach? Dlaczego? W jaki sposób zmodyfikować program tak, by zwracał np. same identyfikatory i nazwy kursów, bez studentów?
+	
+		<Details>
+		Kontrolery należą do tzw. warstwy prezentacji. Ich zadaniem jest tłumaczenie modelu aplikacji na podstać możliwą do przetworzenia po stronie np. fronetendu. W tym przypadku takim formatem jest JSON, którego tworzeniem zajmuje się Spring. Można, a czasem wręcz trzeba wprowadzać tu formę pośrednią, tzw. DTO (Data Transfer Object), którą kontroler powinien tworzyć i zwracać zamiast oryginalnego obiektu (w tym przypadku `CourseDto` zamiast `Course`). 
+		
+		Alternatywą jest ingerowanie w sam model aplikacji, np. używając adnotacji `@JsonIgnore`, **ale nie jest to dobre architektonicznie podejście i należy go unikać!**
+		</Details>
+	
+    1. Dodaj metodę do pobierania studentów zapisanych na przedmiot o podanym id. W tym celu stwórz nowy mapping w kontrolerze kursu i wykorzystaj mechanizm `@PathVariable`.
 
 1. Dodaj metodę do pobierania studenta po numerze indeksu:
 Wskazówka: kontroler powinien udostępniać taką usługę pod adresem: `/students?indexNumber=x`. Wykorzystaj adnotację `@RequestParam`. Zadbaj o to by parametr był opcjonalny (żeby dalej dalo się pobierać pełną listę studentów). Więcej na temat obsługi parametrów [tutaj](https://www.baeldung.com/spring-requestparam-vs-pathvariable).
@@ -57,9 +65,7 @@ W warstwie repozytorium dodaj odpowiednie zapytanie korzystając z tzw. [query m
     Po ponownym uruchomieniu aplikacji Swagger będzie dostępny pod domyślnym adresem:
     http://localhost:8080/swagger-ui.html 
 
-1. Dodaj do kontrolera dla studenta możliwość wystawiania oceny końcowej z danego przedmiotu. Jakiego typu zapytanie REST będzie tutaj potrzebne? W zadaniu konieczne będzie wykorzystanie adnotacji `@Transactional`. Dlaczego?
+1. Dodaj do kontrolera dla studenta możliwość dodania oceny z danego przedmiotu. Jakiego typu zapytanie REST będzie tutaj potrzebne? W zadaniu konieczne będzie wykorzystanie adnotacji `@Transactional`. Dlaczego?
 Przetestuj rozwiązanie z wykorzystaniem Swaggera.
 
-1. Dodaj usługę w `StudentService`, która umożliwi wyliczenie średniej dla studenta, ze wszystkich przedmiotów, na które jest zapisany.
-
-1. ⭐ Dodaj usługę w `CourseService`, która umożliwi wyliczenie średniej dla przedmiotu, dla wszystkich studentów zapisanych na ten przedmiot. Spróbuj zrealizować to zadanie w całości po stronie bazy danych, tj. tworząc odpowiednie zapytanie w warstwie repozytorium. Tym razem może być to niemożliwe przy użyciu standardowego query method - w takiej sytuacji możemy napisać własne query w JPQL.
+1. Dodaj usługę w `StudentService`, która umożliwi wyliczenie średniej dla studenta, ze wszystkich przedmiotów, na które jest zapisany. Spróbuj zrealizować to zadanie w całości po stronie bazy danych, tj. tworząc odpowiednie zapytanie w warstwie repozytorium. Tym razem może być to niemożliwe przy użyciu standardowego query method - w takiej sytuacji możemy napisać własne query w JPQL.
