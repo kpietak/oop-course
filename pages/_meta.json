@@ -67,11 +67,11 @@
         },
       "06-spring-1": {
           "title": "6. Wprowadzenie do Spring Boot",
-          "href": "/06-spring"
+          "href": "/06-spring-1"
         },
 	  "06-spring-2": {
           "title": "7. Architektura serwisu webowego Spring Boot",
-          "href": "/07-spring"
+          "href": "/07-spring-2"
         }
     }
   }
