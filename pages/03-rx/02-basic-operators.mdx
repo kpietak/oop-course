@@ -23,10 +23,10 @@ Na kolejnych stronach znalazły się zadania, które należy wykonać w podanej 
 
 1. Zaimportuj projekt `lab-rx` do IntelliJ (*File -> Open...*). Wszystkie zależności projektu powinny zostać automatycznie pobrane. 
 
-2. Część zadań będzie wymagała użycia wbudowanego scrapera do pobierania obrazów z Google Grafika. Korzystamy z **Google Custom Search JSON API**, które wymaga podania indywidualnego wygenerowanego klucza API. Wejdź na [stronę z instrukcjami na temat Custom Search API](https://developers.google.com/custom-search/v1/overview?hl=pl) i zaloguj się kontem Google. Następnie w sekcji *Klucz interfejsu API* znajdź przycisk *Zamów klucz* i postępuj zgodnie z instrukcjami. Na koniec wklej otrzymany klucz w klasie `CrawlerApp` (stała `GOOGLE_CUSTOM_SEARCH_API_KEY`).
+2. Część zadań będzie wymagała użycia wbudowanego scrapera do pobierania obrazów z Google Grafika. Korzystamy z **Serper API**, które wymaga podania indywidualnego wygenerowanego klucza API. Wejdź na [stronę Serper API](https://serper.dev) i załóż tam konto. Następnie w sekcji *API Keys* znajdź swój domyślny klucz, skopiuj go i wklej w klasie `CrawlerApp` (stała `SERPER_API_KEY`).
 
 	<Callout type="warning">
-    **Uwaga:** w darmowej wersji API umożliwia wykonanie 100 zapytań / dzień. Na potrzeby tej i kolejnej laborki w zupełności powinno wystarczyć, ale warto o tym pamiętać. Możesz sprawdzić aktualną wartość wykorzystanego limitu w [panelu API konsoli Cloud Platform](https://console.cloud.google.com/apis/dashboard?hl=pl). Z API będziemy korzystać w sekcjach II i III tego laboratorium).
+    **Uwaga:** w darmowej wersji Serper API umożliwia wykonanie 2500 zapytań. Na potrzeby tej i kolejnej laborki w zupełności powinno wystarczyć, ale warto o tym pamiętać. Możesz sprawdzić aktualną wartość wykorzystanego limitu w panelu Billing. Serper nie wymaga podawania danych karty płatniczej przy rejestracji!
 	</Callout>
 
 3. Zapoznaj się z klasami: `PhotoCrawler`, `PhotoDownloader` oraz `PhotoSerializer` i `PhotoProcessor`. Zwróć uwagę przede wszystkim na publiczne metody udostępniane przez te klasy.
