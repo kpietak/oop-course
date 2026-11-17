@@ -7,6 +7,6 @@
   "06-scope": "Zasięg Singleton",
   "source-code" : {
     "title" : "Kod źródłowy",
-    "href" :  "/06-ioc-guice/lab-ioc.zip"
+    "href" :  "/05-ioc-guice/lab-ioc.zip"
   }
 }
